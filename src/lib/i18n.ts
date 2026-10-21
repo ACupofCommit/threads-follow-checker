@@ -27,7 +27,18 @@ const ko = {
   },
   steps: {
     title: "사용 방법",
-    screenshot: "스크린샷 자리",
+    illustration: {
+      followers: "팔로워",
+      following: "팔로잉",
+      followBack: "맞팔로우",
+      followingButton: "팔로잉",
+      pasteWarning: "붙여 넣기가 막히면 아래처럼 입력하고 Enter",
+      collected: "팔로워: 139명 수집 · 팔로잉: 141명 수집",
+      resultTitle: "나를 팔로우하지 않는 계정 3명:",
+      account: "계정",
+      address: "주소",
+      dryRun: "DRY_RUN: 아무도 언팔로우하지 않았습니다.",
+    },
     items: [
       {
         title: "PC에서 스레드 팔로워 창 열기",
@@ -133,7 +144,18 @@ const en: Dictionary = {
   },
   steps: {
     title: "How to use",
-    screenshot: "Screenshot",
+    illustration: {
+      followers: "Followers",
+      following: "Following",
+      followBack: "Follow back",
+      followingButton: "Following",
+      pasteWarning: "If pasting is blocked, type this and press Enter",
+      collected: "팔로워: 139명 수집 · 팔로잉: 141명 수집",
+      resultTitle: "나를 팔로우하지 않는 계정 3명:",
+      account: "계정",
+      address: "주소",
+      dryRun: "DRY_RUN: 아무도 언팔로우하지 않았습니다.",
+    },
     items: [
       {
         title: "Open your followers on desktop",
