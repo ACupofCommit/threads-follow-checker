@@ -51,6 +51,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
         </div>
 
         <div className="flex flex-col gap-2">
+          {/* AI 검사와 콘솔 붙여 넣기에 같은 스크립트를 쓰도록 복사 버튼은 하나만 둔다. */}
           <Button size="lg" className="h-11 text-base" onClick={copy}>
             <Copy /> {o.copy}
           </Button>

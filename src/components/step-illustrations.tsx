@@ -245,9 +245,52 @@ export function OpenConsoleIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 3. 콘솔에 스크립트를 붙여 넣고 Enter. Chrome 이 막으면 allow pasting. */
+/** 3. 복사한 스크립트를 AI 채팅에 붙여 넣어 안전한지 검사. 특정 AI 서비스가 아닌 일반 채팅 화면이다. */
+export function AiCheckIllustration({ l }: { l: Labels }) {
+  const a = l.ai;
+  return (
+    <Browser url="chat · AI">
+      <text x="160" y="34" fontSize="7" fontWeight="700" fill={TEXT} textAnchor="middle">
+        {a.title}
+      </text>
+      {/* 내 요청: 문구 + 스크립트 */}
+      <rect x="92" y="42" width="220" height="44" rx="8" fill="#2f2f35" />
+      <foreignObject x="98" y="45" width="208" height="16">
+        <div style={{ fontSize: "6.3px", lineHeight: 1.3, color: TEXT, wordBreak: "keep-all" }}>{a.request}</div>
+      </foreignObject>
+      <rect x="98" y="62" width="208" height="19" rx="3" fill="#1b1b1f" />
+      <text x="103" y="70" fontSize="5.8" fill="#9aa0a6" fontFamily={MONO}>
+        void (async () =&gt; {"{"}
+      </text>
+      <text x="103" y="77.5" fontSize="5.8" fill="#9aa0a6" fontFamily={MONO}>
+        {"  const CONFIG = { keep: [] }; …"}
+      </text>
+      {/* AI 답변 */}
+      <circle cx="16" cy="98" r="6" fill="#00A63E" />
+      <text x="16" y="100.3" fontSize="6" fontWeight="700" fill="#fff" textAnchor="middle">
+        AI
+      </text>
+      <rect x="26" y="92" width="210" height="80" rx="8" fill="#1d1d1d" stroke={LINE} />
+      {a.checks.map((line, i) => (
+        <g key={line}>
+          <text x="34" y={106 + i * 13} fontSize="7" fill="#34c759">
+            ✓
+          </text>
+          <text x="44" y={106 + i * 13} fontSize="6.5" fill={TEXT}>
+            {line}
+          </text>
+        </g>
+      ))}
+      <text x="34" y={106 + a.checks.length * 13} fontSize="6.5" fontWeight="700" fill={TEXT}>
+        {a.verdict}
+      </text>
+    </Browser>
+  );
+}
+
+/** 4. 콘솔에 스크립트를 붙여 넣고 Enter. Chrome 이 막으면 allow pasting. */
 export function PasteScriptIllustration({ l }: { l: Labels }) {
-  const code = ["(async () => {", "  const CONFIG = {", "    keep: [],", "  };", "  …", "})();"];
+  const code = ["void (async () => {", "  try {", "    const CONFIG = {", "      keep: [],", "    };", "    …", "})();"];
   return (
     <Browser>
       <rect x="0" y="20" width="320" height="160" fill="#202124" />
@@ -283,7 +326,7 @@ export function PasteScriptIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 4. 콘솔에 나온 결과 표. */
+/** 5. 콘솔에 나온 결과 표. */
 export function ResultTableIllustration({ l }: { l: Labels }) {
   const rows = ["user_b", "user_d", "user_e"];
   const col = [10, 54, 128];
@@ -335,7 +378,7 @@ export function ResultTableIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 5. 팔로잉 목록에서 "뒷삭 검거" 표시가 붙은 계정을 직접 언팔로우. */
+/** 6. 팔로잉 목록에서 "뒷삭 검거" 표시가 붙은 계정을 직접 언팔로우. */
 export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
   return (
     <Browser>
@@ -348,6 +391,7 @@ export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
 export const STEP_ILLUSTRATIONS = [
   SignedInIllustration,
   OpenConsoleIllustration,
+  AiCheckIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
   UnfollowMarkedIllustration,

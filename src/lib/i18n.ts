@@ -28,6 +28,12 @@ const ko = {
   steps: {
     title: "사용 방법",
     illustration: {
+      ai: {
+        title: "AI 채팅",
+        request: "threads.com 콘솔에 붙여 넣기 전에 이 스크립트가 안전한지 검사해 줘.",
+        checks: ["외부로 보내는 요청: 없음", "쿠키·토큰 읽기: 없음", "팔로우·언팔로우·게시: 없음", "난독화·eval: 없음"],
+        verdict: "화면을 읽고 표시만 하는 스크립트예요.",
+      },
       profile: {
         nav: ["추천", "새로운 스레드", "검색", "메시지", "활동", "프로필", "인사이트"],
         activeNav: 5,
@@ -62,8 +68,16 @@ const ko = {
         body: "F12(맥은 ⌥⌘I)를 눌러 개발자 도구를 열고 Console 탭으로 가요.",
       },
       {
+        title: "스크립트 복사하고 AI로 검사",
+        body: "아래 ‘스크립트 만들기’에서 ‘스크립트 복사’를 누르고, ChatGPT·Claude·Gemini 같은 AI 채팅에 이렇게 물어본 뒤 스크립트를 붙여 넣어요. 위험한 부분이 없다는 걸 확인하면 다음 단계로 가요.",
+        prompt:
+          "threads.com 개발자 도구 콘솔에 붙여 넣으려는 스크립트야. 외부로 데이터를 보내거나, 쿠키·토큰을 읽거나, 나 대신 팔로우·게시 같은 행동을 하는 위험한 코드가 있는지 검사해 줘.",
+        warning:
+          "이 사이트의 스크립트는 안전하지만, 누구의 스크립트도 그냥 믿지 마세요. 이 사이트처럼 꾸민 피싱 사이트가 계정을 빼앗는 악성 스크립트를 붙여 넣게 할 수 있어요. 개발자 도구에 무엇이든 붙여 넣기 전에는 꼭 검사하세요.",
+      },
+      {
         title: "스크립트 붙여 넣고 Enter",
-        body: "아래에서 스크립트를 복사해 콘솔에 붙여 넣고 Enter를 눌러요. Chrome이 붙여 넣기를 막으면 allow pasting 을 입력하고 Enter를 누른 뒤 다시 붙여 넣어요.",
+        body: "검사한 그 스크립트를 콘솔에 붙여 넣고 Enter를 눌러요. Chrome이 붙여 넣기를 막으면 allow pasting 을 입력하고 Enter를 누른 뒤 다시 붙여 넣어요.",
       },
       {
         title: "결과 표 확인",
@@ -82,7 +96,7 @@ const ko = {
     keepPlaceholder: "@threads\n@zuck",
     keepCount: "{count}개 계정을 결과에서 빼요",
     copy: "스크립트 복사",
-    copied: "스크립트를 복사했어요. 스레드 탭의 콘솔에 붙여 넣으세요.",
+    copied: "스크립트를 복사했어요. AI로 검사한 뒤 스레드 탭의 콘솔에 붙여 넣으세요.",
     copyFailed: "복사하지 못했어요. 미리보기에서 직접 선택해 복사해 주세요.",
     note: "목록을 보여 주고 화면에 표시만 해요. 아무도 언팔로우하지 않아요.",
     preview: "스크립트 미리보기",
@@ -151,6 +165,12 @@ const en: Dictionary = {
   steps: {
     title: "How to use",
     illustration: {
+      ai: {
+        title: "AI chat",
+        request: "Check if this script is safe before I paste it into the threads.com console.",
+        checks: ["Sends data out: no", "Reads cookies/tokens: no", "Follows/unfollows/posts: no", "Obfuscation/eval: no"],
+        verdict: "It only reads the page and adds marks.",
+      },
       profile: {
         nav: ["For you", "New thread", "Search", "Messages", "Activity", "Profile", "Insights"],
         activeNav: 5,
@@ -185,8 +205,16 @@ const en: Dictionary = {
         body: "Press F12 (⌥⌘I on Mac) to open developer tools and go to the Console tab.",
       },
       {
+        title: "Copy the script and check it with AI",
+        body: "Click ‘Copy script’ in ‘Build your script’ below, then ask an AI chat like ChatGPT, Claude, or Gemini something like this and paste the script. Move on only after confirming nothing is dangerous.",
+        prompt:
+          "I'm about to paste this script into the developer console on threads.com. Check whether it has anything dangerous: sending data out, reading cookies or tokens, or acting on my behalf like following or posting.",
+        warning:
+          "The script on this site is safe, but don't blindly trust anyone's script. Phishing sites that look like this one can trick you into pasting malicious code that takes over your account. Always check before pasting anything into developer tools.",
+      },
+      {
         title: "Paste the script and press Enter",
-        body: "Copy the script below, paste it into the console, and press Enter. If Chrome blocks pasting, type allow pasting, press Enter, and paste again.",
+        body: "Paste the same script you checked into the console and press Enter. If Chrome blocks pasting, type allow pasting, press Enter, and paste again.",
       },
       {
         title: "Check the result table",
@@ -205,7 +233,7 @@ const en: Dictionary = {
     keepPlaceholder: "@threads\n@zuck",
     keepCount: "{count} accounts will be left out",
     copy: "Copy script",
-    copied: "Script copied. Paste it into the console of your Threads tab.",
+    copied: "Script copied. Check it with AI, then paste it into the console of your Threads tab.",
     copyFailed: "Couldn't copy. Please select and copy it from the preview.",
     note: "It only lists and marks accounts. It never unfollows anyone.",
     preview: "Script preview",
