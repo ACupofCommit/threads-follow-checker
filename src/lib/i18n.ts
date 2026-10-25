@@ -59,7 +59,7 @@ const ko = {
       },
       {
         title: "표시된 계정을 직접 언팔로우",
-        body: "스크립트가 끝나면 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄이 붉게 칠해지고 ‘뒷삭 검거(맞팔안한 친구)’가 붙어요. 목록을 내리며 표시된 계정의 ‘팔로잉’ → ‘언팔로우’를 눌러요. 특정 계정을 바로 찾으려면 ‘팔로잉’ 탭 제목을 한 번 누른 뒤 Cmd+F(Windows는 Ctrl+F)로 아이디를 찾아요. 표시는 새로 고치면 사라져요.",
+        body: "스크립트가 끝나면 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄이 붉게 칠해지고 ‘뒷삭 검거(맞팔안한 친구)’가 붙어요. 목록을 내리며 표시된 계정의 ‘팔로잉’ → ‘언팔로우’를 눌러요. 특정 계정을 바로 찾으려면 ‘팔로잉’ 탭 제목을 한 번 누른 뒤 Cmd+F(Windows는 Ctrl+F)로 아이디를 찾아요. 표시는 새로 고치면 사라져요. 너무 빠르게 연달아 언팔로우하면 Meta가 비정상 활동으로 보고 잠시 작업을 제한할 수 있으니 천천히 정리하세요.",
       },
     ],
   },
@@ -170,7 +170,7 @@ const en: Dictionary = {
       },
       {
         title: "Unfollow the marked accounts by hand",
-        body: "When the script finishes, rows in your Following list that don't follow you back turn red with a ‘뒷삭 검거(맞팔안한 친구)’ (not following you back) badge. Scroll the list and click ‘Following’ → ‘Unfollow’ on the marked accounts. To jump to one, click the ‘Following’ tab title once, then search its name with Cmd+F (Ctrl+F on Windows). The marks disappear when you reload.",
+        body: "When the script finishes, rows in your Following list that don't follow you back turn red with a ‘뒷삭 검거(맞팔안한 친구)’ (not following you back) badge. Scroll the list and click ‘Following’ → ‘Unfollow’ on the marked accounts. To jump to one, click the ‘Following’ tab title once, then search its name with Cmd+F (Ctrl+F on Windows). The marks disappear when you reload. Unfollowing too fast in a row may make Meta treat it as unusual activity and temporarily restrict actions, so take it slow.",
       },
     ],
   },
