@@ -150,7 +150,7 @@ function FollowDialog({ l, tab = "followers", flagged = [] }: { l: Labels; tab?:
 export function SignedInIllustration({ l }: { l: Labels }) {
   const p = l.profile;
   return (
-    <Browser>
+    <Browser url="threads.com/@acupofcommit">
       {/* 왼쪽 메뉴 */}
       <text x="12" y="36" fontSize="10" fontWeight="800" fontStyle="italic" fill={TEXT}>
         threads
@@ -174,11 +174,13 @@ export function SignedInIllustration({ l }: { l: Labels }) {
         {p.name}
       </text>
       <text x="102" y="57" fontSize="6.5" fill="#bbb">
-        me
+        acupofcommit
       </text>
       <circle cx="288" cy="48" r="13" fill="#3a3a3a" />
-      {[66, 74, 82].map((y, i) => (
-        <rect key={y} x="102" y={y} width={[120, 140, 96][i]} height="4" rx="2" fill="#2e2e2e" />
+      {p.bio.map((line, i) => (
+        <text key={i} x="102" y={70 + i * 8} fontSize="5.8" fill="#ddd">
+          {line}
+        </text>
       ))}
       {[0, 1, 2].map((i) => (
         <circle key={i} cx={105 + i * 5} cy="96" r="3.2" fill={["#5a5a5a", "#6a6a6a", "#7a7a7a"][i]} stroke={PANEL} />
@@ -198,8 +200,13 @@ export function SignedInIllustration({ l }: { l: Labels }) {
       <line x1="90" x2="312" y1="142" y2="142" stroke={LINE} />
       <line x1="102" x2="152" y1="142" y2="142" stroke={TEXT} strokeWidth="1.2" />
       <circle cx="108" cy="156" r="6" fill="#3a3a3a" />
-      <rect x="120" y="153.5" width="90" height="5" rx="2.5" fill="#262626" />
+      <text x="120" y="158.3" fontSize="6" fill={MUTED}>
+        {p.composer}
+      </text>
       <rect x="276" y="150" width="24" height="12" rx="4" fill="none" stroke="#444" />
+      <text x="288" y="158.3" fontSize="5.8" fontWeight="600" fill={TEXT} textAnchor="middle">
+        {p.post}
+      </text>
     </Browser>
   );
 }

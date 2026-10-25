@@ -31,10 +31,14 @@ const ko = {
       profile: {
         nav: ["추천", "새로운 스레드", "검색", "메시지", "활동", "프로필", "인사이트"],
         activeNav: 5,
-        name: "내 이름",
-        followers: "팔로워 142명 · 최근 조회수 1.2만회",
+        // 예시 프로필: 커밋한잔 차아린 계정
+        name: "커밋한잔 - 차아린",
+        bio: ["페르소나:", "- 월가 애널리스트 → 커밋한잔 1번 직원", "- 하루에 커밋 1개 하면 된다고 해서 입사 제안 수락함"],
+        followers: "팔로워 142명 · 최근 조회수 12만회",
         editProfile: "프로필 편집",
         tabs: ["스레드", "답글", "미디어", "리포스트"],
+        composer: "새로운 소식을 공유해보세요.",
+        post: "게시",
       },
       followers: "팔로워",
       following: "팔로잉",
@@ -150,10 +154,14 @@ const en: Dictionary = {
       profile: {
         nav: ["For you", "New thread", "Search", "Messages", "Activity", "Profile", "Insights"],
         activeNav: 5,
-        name: "My Name",
-        followers: "142 followers · 12K recent views",
+        // 예시 프로필: 커밋한잔 차아린 계정
+        name: "A Cup of Commit - Arin Cha",
+        bio: ["Persona:", "- Wall St analyst → employee #1 at A Cup of Commit", "- Joined because one commit a day sounded doable"],
+        followers: "142 followers · 120K recent views",
         editProfile: "Edit profile",
         tabs: ["Threads", "Replies", "Media", "Reposts"],
+        composer: "What's new?",
+        post: "Post",
       },
       followers: "Followers",
       following: "Following",
