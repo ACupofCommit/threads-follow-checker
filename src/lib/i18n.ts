@@ -37,13 +37,13 @@ const ko = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      done: "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가…",
-      badge: "뒷삭하였음",
+      done: "언팔로우는 하지 않았습니다. 팔로잉 목록을 내리며 '뒷삭 검거' 표시가…",
+      badge: "뒷삭 검거(맞팔안한 친구)",
     },
     items: [
       {
-        title: "PC에서 스레드 팔로워 창 열기",
-        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인하고, 내 프로필에서 “팔로워 OO명”을 눌러 팔로워·팔로잉 창을 열어요.",
+        title: "PC에서 스레드 내 프로필 열기",
+        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인하고 내 프로필을 열어요. 팔로워·팔로잉 창은 스크립트가 “팔로워 OO명”을 눌러 알아서 열어요.",
       },
       {
         title: "개발자 도구 콘솔 열기",
@@ -59,7 +59,7 @@ const ko = {
       },
       {
         title: "표시된 계정을 직접 언팔로우",
-        body: "스크립트가 끝나면 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄이 붉게 칠해지고 ‘뒷삭하였음’이 붙어요. 목록을 내리며 표시된 계정의 ‘팔로잉’ → ‘언팔로우’를 눌러요. 특정 계정을 바로 찾으려면 ‘팔로잉’ 탭 제목을 한 번 누른 뒤 Cmd+F(Windows는 Ctrl+F)로 아이디를 찾아요. 표시는 새로 고치면 사라져요.",
+        body: "스크립트가 끝나면 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄이 붉게 칠해지고 ‘뒷삭 검거(맞팔안한 친구)’가 붙어요. 목록을 내리며 표시된 계정의 ‘팔로잉’ → ‘언팔로우’를 눌러요. 특정 계정을 바로 찾으려면 ‘팔로잉’ 탭 제목을 한 번 누른 뒤 Cmd+F(Windows는 Ctrl+F)로 아이디를 찾아요. 표시는 새로 고치면 사라져요.",
       },
     ],
   },
@@ -148,13 +148,13 @@ const en: Dictionary = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      done: "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가…",
-      badge: "뒷삭하였음",
+      done: "언팔로우는 하지 않았습니다. 팔로잉 목록을 내리며 '뒷삭 검거' 표시가…",
+      badge: "뒷삭 검거(맞팔안한 친구)",
     },
     items: [
       {
-        title: "Open your followers on desktop",
-        body: "Sign in to threads.com in a desktop browser (Chrome recommended), go to your profile, and click “OO followers” to open the followers/following dialog.",
+        title: "Open your profile on desktop",
+        body: "Sign in to threads.com in a desktop browser (Chrome recommended) and open your profile. The script clicks “OO followers” to open the followers/following dialog for you.",
       },
       {
         title: "Open the developer console",
@@ -170,7 +170,7 @@ const en: Dictionary = {
       },
       {
         title: "Unfollow the marked accounts by hand",
-        body: "When the script finishes, rows in your Following list that don't follow you back turn red with a ‘뒷삭하였음’ (unfollowed you) badge. Scroll the list and click ‘Following’ → ‘Unfollow’ on the marked accounts. To jump to one, click the ‘Following’ tab title once, then search its name with Cmd+F (Ctrl+F on Windows). The marks disappear when you reload.",
+        body: "When the script finishes, rows in your Following list that don't follow you back turn red with a ‘뒷삭 검거(맞팔안한 친구)’ (not following you back) badge. Scroll the list and click ‘Following’ → ‘Unfollow’ on the marked accounts. To jump to one, click the ‘Following’ tab title once, then search its name with Cmd+F (Ctrl+F on Windows). The marks disappear when you reload.",
       },
     ],
   },

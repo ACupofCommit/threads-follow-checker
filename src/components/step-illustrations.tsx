@@ -56,6 +56,11 @@ function Key({ x, y, label, highlight }: { x: number; y: number; label: string; 
   );
 }
 
+/** 배지 폭. 한글은 글자 폭이 넓어 대략 글자 수로 잡는다. */
+function flagWidth(flag: string): number {
+  return 8 + [...flag].reduce((sum, ch) => sum + (/[가-힣]/.test(ch) ? 5.6 : 3.2), 0);
+}
+
 /** 팔로워·팔로잉 대화상자의 한 줄. */
 function Row({
   y,
@@ -68,7 +73,7 @@ function Row({
   name: string;
   button: string;
   filled?: boolean;
-  /** 스크립트가 "뒷삭하였음"으로 표시한 줄. 값이 표시 문구다. */
+  /** 스크립트가 "뒷삭 검거"로 표시한 줄. 값이 표시 문구다. */
   flag?: string;
 }) {
   return (
@@ -77,8 +82,9 @@ function Row({
         <>
           <rect x="81" y={y - 12.5} width="168" height="25" fill="#ff3b30" fillOpacity="0.16" />
           <rect x="81" y={y - 12.5} width="2" height="25" fill="#ff3b30" />
-          <rect x={111 + name.length * 4.6} y={y - 8} width="34" height="9" rx="4.5" fill="#ff3b30" />
-          <text x={128 + name.length * 4.6} y={y - 1.5} fontSize="5.5" fontWeight="700" fill="#fff" textAnchor="middle">
+          {/* 배지 문구가 길어 버튼과 겹치지 않게 아이디 아래 줄에 둔다. */}
+          <rect x="109" y={y + 1.5} width={flagWidth(flag)} height="8.5" rx="4.25" fill="#ff3b30" />
+          <text x={109 + flagWidth(flag) / 2} y={y + 7.6} fontSize="5.3" fontWeight="700" fill="#fff" textAnchor="middle">
             {flag}
           </text>
         </>
@@ -87,7 +93,7 @@ function Row({
       <text x="109" y={y - 1} fontSize="7.5" fontWeight="600" fill={TEXT}>
         {name}
       </text>
-      <rect x="109" y={y + 2} width="34" height="4" rx="2" fill="#3a3a3a" />
+      {!flag && <rect x="109" y={y + 2} width="34" height="4" rx="2" fill="#3a3a3a" />}
       <rect x="200" y={y - 7} width="42" height="14" rx="4" fill={filled ? "#fff" : "none"} stroke={filled ? "none" : "#444"} />
       <text x="221" y={y + 2.5} fontSize="6.5" fontWeight="600" fill={filled ? "#000" : MUTED} textAnchor="middle">
         {button}
@@ -280,7 +286,7 @@ export function ResultTableIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 5. 팔로잉 목록에서 "뒷삭하였음" 표시가 붙은 계정을 직접 언팔로우. */
+/** 5. 팔로잉 목록에서 "뒷삭 검거" 표시가 붙은 계정을 직접 언팔로우. */
 export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
   return (
     <Browser>

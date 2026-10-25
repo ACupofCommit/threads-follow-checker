@@ -39,9 +39,9 @@ const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지
 // __SITE__ 에서 만든 스크립트입니다. 이 브라우저 안에서만 돌고, 어떤 데이터도 밖으로 보내지 않습니다.
 //
 // 쓰는 법
-// 1. 스레드 내 프로필에서 "OO followers"를 눌러 팔로워/팔로잉 대화상자를 연다.
+// 1. 스레드에서 내 프로필을 연다. 팔로워 창이 닫혀 있으면 스크립트가 "팔로워 OO명"을 눌러 연다.
 // 2. 개발자 도구 콘솔에 이 스크립트 전체를 붙여 넣고 Enter.
-// 3. 팔로잉 목록에서 "뒷삭하였음" 표시가 붙은 계정을 직접 언팔로우한다.
+// 3. 팔로잉 목록에서 "뒷삭 검거" 표시가 붙은 계정을 직접 언팔로우한다.
 //    이 스크립트는 목록을 보여 주고 화면에 표시만 할 뿐, 아무도 언팔로우하지 않는다.
 
 // 앞의 void 는 콘솔이 Promise {<pending>} 을 찍지 않게 한다. 진행 상황은 아래 안내로 보여 준다.
@@ -50,7 +50,18 @@ __CONFIG__
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const rand = (a, b) => a + Math.random() * (b - a);
   const dialog = () => document.querySelector('[role="dialog"]');
-  if (!dialog()) return console.error("팔로워/팔로잉 대화상자를 먼저 열어 주세요.");
+  if (!dialog()) {
+    // 팔로워 창이 닫혀 있으면 프로필의 "팔로워 OO명"(영문 "OO followers")을 눌러 연다.
+    const opener = [...document.querySelectorAll('[role="button"], a, span')].find((e) =>
+      /^(팔로워\\s*[\\d,.]+\\s*[천만]?\\s*명|[\\d,.]+\\s*[KkM]?\\s*followers?)$/i.test((e.innerText || "").trim()),
+    );
+    if (opener) {
+      console.log("👆 팔로워 창을 엽니다…");
+      (opener.closest('[role="button"], a') || opener).click();
+      for (let k = 0; k < 20 && !dialog(); k++) await sleep(250);
+    }
+  }
+  if (!dialog()) return console.error("팔로워 창을 찾지 못했어요. 스레드에서 내 프로필(threads.com/@내아이디)을 연 뒤 다시 실행해 주세요.");
 
   const startedAt = Date.now();
   const elapsed = () => Math.round((Date.now() - startedAt) / 1000) + "초";
@@ -74,7 +85,8 @@ __CONFIG__
   }
 
   // 무한 스크롤: 화면의 80%씩 내리면서 보이는 계정을 모은다(한 번에 끝으로 건너뛰면 중간 줄을 놓친다).
-  // 바닥에 닿은 상태에서 새 계정이 5번 연속 안 늘면 끝으로 본다.
+  // 바닥에 닿은 상태에서 새 계정이 연속으로 안 늘면 끝으로 본다. 탭 숫자보다 적게 모였으면 다음 묶음을
+  // 늦게 불러오는 중일 수 있어 더 오래 기다리고, 조금 올렸다 내려 다시 불러오게 한다.
   async function collect(i, label) {
     await openTab(i);
     const total = countOf(i);
@@ -86,7 +98,7 @@ __CONFIG__
     let still = 0;
     let rounds = 0;
     let logged = 0;
-    while (still < 5) {
+    while (still < (set.size >= total ? 4 : 10)) {
       const before = set.size;
       usernamesInView().forEach((u) => set.add(u));
       // 몇 번 스크롤할 때마다 지금까지 모은 수를 알려 준다.
@@ -97,9 +109,18 @@ __CONFIG__
       }
       const s = scroller();
       const atBottom = !s || s.scrollTop + s.clientHeight >= s.scrollHeight - 2;
-      if (s) s.scrollTop += s.clientHeight * 0.8;
+      if (s && atBottom && set.size === before) {
+        s.scrollTop -= s.clientHeight;
+        await sleep(300);
+        s.scrollTop = s.scrollHeight;
+      } else if (s) {
+        s.scrollTop += s.clientHeight * 0.8;
+      }
       await sleep(rand(1000, 1800));
       still = set.size === before && atBottom ? still + 1 : 0;
+    }
+    if (total && set.size < total * 0.97) {
+      console.warn("⚠ " + label + "를 다 모으지 못했을 수 있어요 (" + set.size + "/" + total + "명). 탭 숫자에는 목록에 안 보이는 비활성 계정도 들어가지만, 차이가 크면 다시 실행해 보세요.");
     }
     console.log(\`✓ \${label}: \${set.size}명 수집 (화면 표시 \${countOf(i)}명)\`);
     return set;
@@ -118,11 +139,11 @@ __CONFIG__
   // 계정 이름만 따로 찍어 복사하기 쉽게 한다.
   if (targets.length > 0) console.log(targets.join("\\n"));
 
-  // 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄에 "뒷삭하였음"을 표시한다.
+  // 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄에 "뒷삭 검거"를 표시한다.
   // 화면 모양만 바꾸고 스레드에는 아무것도 보내지 않는다. 새로 고치면 사라진다.
   // 스레드 화면을 그리는 React 와 부딪히지 않게 요소를 끼워 넣지 않고 속성과 CSS(::after)로만 표시한다.
   // 목록은 스크롤할 때마다 줄을 다시 그리고 같은 요소에 다른 계정을 넣기도 하므로, 바뀔 때마다 다시 맞춘다.
-  console.log("🖍️ 팔로잉 목록에 '뒷삭하였음' 표시 중…");
+  console.log("🖍️ 팔로잉 목록에 '뒷삭 검거' 표시 중…");
   const targetSet = new Set(targets);
   const ROW = "data-nonfollower";
   const NAME = "data-nonfollower-name";
@@ -132,7 +153,7 @@ __CONFIG__
   style.id = "nonfollower-style";
   style.textContent = [
     "[" + ROW + "] { background: rgba(255, 59, 48, 0.14) !important; box-shadow: inset 3px 0 0 #ff3b30; }",
-    "[" + NAME + "]::after { content: '뒷삭하였음'; display: inline-block; margin-left: 6px; padding: 1px 6px;" +
+    "[" + NAME + "]::after { content: '뒷삭 검거(맞팔안한 친구)'; display: inline-block; margin-left: 6px; padding: 1px 6px;" +
       " border-radius: 999px; background: #ff3b30; color: #fff; font-size: 11px; font-weight: 700; line-height: 16px; vertical-align: middle; }",
   ].join("\\n");
   document.head.appendChild(style);
@@ -172,13 +193,15 @@ __CONFIG__
       mark();
     });
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // 목록이 줄 요소를 그대로 두고 링크 주소·글자만 바꿔 다른 계정을 보여 줄 때도 다시 맞추도록
+  // href 속성과 글자 변경도 지켜본다(우리가 붙이는 data- 속성은 빼서 스스로를 다시 부르지 않게 한다).
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["href"] });
   window.__nonFollowerObserver = observer;
   mark();
 
   console.log("✅ 끝났습니다 (" + elapsed() + ").");
   console.log(
-    "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가 붙은 계정을 직접 언팔로우하세요. 표시는 새로 고치면 사라집니다.",
+    "언팔로우는 하지 않았습니다. 팔로잉 목록을 내리며 '뒷삭 검거' 표시가 붙은 계정을 직접 언팔로우하세요. 표시는 새로 고치면 사라집니다.",
   );
 })();
 `;
