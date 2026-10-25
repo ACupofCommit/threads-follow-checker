@@ -62,20 +62,29 @@ function Row({
   name,
   button,
   filled,
-  found,
+  flag,
 }: {
   y: number;
   name: string;
   button: string;
   filled?: boolean;
-  /** Cmd+F 로 찾은 줄. 이름을 찾기 강조색으로 칠한다. */
-  found?: boolean;
+  /** 스크립트가 "뒷삭하였음"으로 표시한 줄. 값이 표시 문구다. */
+  flag?: string;
 }) {
   return (
     <g>
+      {flag && (
+        <>
+          <rect x="81" y={y - 12.5} width="168" height="25" fill="#ff3b30" fillOpacity="0.16" />
+          <rect x="81" y={y - 12.5} width="2" height="25" fill="#ff3b30" />
+          <rect x={111 + name.length * 4.6} y={y - 8} width="34" height="9" rx="4.5" fill="#ff3b30" />
+          <text x={128 + name.length * 4.6} y={y - 1.5} fontSize="5.5" fontWeight="700" fill="#fff" textAnchor="middle">
+            {flag}
+          </text>
+        </>
+      )}
       <circle cx="96" cy={y} r="7" fill="#4a4a4a" />
-      {found && <rect x="107.5" y={y - 8} width={name.length * 4.6 + 3} height="10" rx="1.5" fill="#ff9632" />}
-      <text x="109" y={y - 1} fontSize="7.5" fontWeight="600" fill={found ? "#000" : TEXT}>
+      <text x="109" y={y - 1} fontSize="7.5" fontWeight="600" fill={TEXT}>
         {name}
       </text>
       <rect x="109" y={y + 2} width="34" height="4" rx="2" fill="#3a3a3a" />
@@ -88,7 +97,7 @@ function Row({
   );
 }
 
-function FollowDialog({ l, tab = "followers", found }: { l: Labels; tab?: "followers" | "following"; found?: string }) {
+function FollowDialog({ l, tab = "followers", flagged = [] }: { l: Labels; tab?: "followers" | "following"; flagged?: string[] }) {
   const onFollowing = tab === "following";
   return (
     <g>
@@ -109,10 +118,15 @@ function FollowDialog({ l, tab = "followers", found }: { l: Labels; tab?: "follo
       <line x1={onFollowing ? 165 : 80} x2={onFollowing ? 250 : 165} y1="60" y2="60" stroke={TEXT} strokeWidth="1.5" />
       {onFollowing ? (
         <>
-          <Row y={76} name="user_a" button={l.followingButton} />
-          <Row y={102} name="user_b" button={l.followingButton} found={found === "user_b"} />
-          <Row y={128} name="user_c" button={l.followingButton} />
-          <Row y={154} name="user_d" button={l.followingButton} />
+          {["user_a", "user_b", "user_c", "user_d"].map((name, i) => (
+            <Row
+              key={name}
+              y={76 + i * 26}
+              name={name}
+              button={l.followingButton}
+              flag={flagged.includes(name) ? l.badge : undefined}
+            />
+          ))}
         </>
       ) : (
         <>
@@ -266,22 +280,12 @@ export function ResultTableIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 5. 팔로잉 탭 제목을 눌러 페이지를 선택하고, Cmd+F 로 계정을 찾아 직접 언팔로우. */
-export function FindAndUnfollowIllustration({ l }: { l: Labels }) {
+/** 5. 팔로잉 목록에서 "뒷삭하였음" 표시가 붙은 계정을 직접 언팔로우. */
+export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
   return (
     <Browser>
-      <FollowDialog l={l} tab="following" found="user_b" />
-      {/* 브라우저 찾기 막대 */}
-      <rect x="256" y="24" width="58" height="16" rx="4" fill="#2b2b2b" stroke="#4a4a4a" />
-      <text x="261" y="34.5" fontSize="6.5" fill={TEXT} fontFamily={MONO}>
-        user_b
-      </text>
-      <text x="309" y="34.5" fontSize="6" fill={MUTED} textAnchor="end">
-        1/1
-      </text>
+      <FollowDialog l={l} tab="following" flagged={["user_b", "user_d"]} />
       <Cursor x={226} y={104} />
-      <Key x={262} y={152} label="⌘F" highlight />
-      <Key x={262} y={132} label="Ctrl+F" />
     </Browser>
   );
 }
@@ -291,5 +295,5 @@ export const STEP_ILLUSTRATIONS = [
   OpenConsoleIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
-  FindAndUnfollowIllustration,
+  UnfollowMarkedIllustration,
 ];

@@ -13,7 +13,7 @@ const ko = {
   },
   header: { name: "스레드 맞팔 확인", theme: "화면 모드", light: "라이트", dark: "다크", system: "시스템", language: "언어" },
   hero: {
-    title: "맞팔 안 한 계정,\n1분 만에 찾기",
+    title: "쓰레드 맞팔 안 한 계정 찾기",
     subtitle: "스레드에서 내가 팔로우하지만 나를 팔로우하지 않는 계정을 찾아 드려요. 스크립트 하나만 복사해서 붙여 넣으면 돼요.",
     meme: "누가 뒷삭을 하였는가~",
   },
@@ -22,7 +22,7 @@ const ko = {
     items: [
       "이 사이트는 스레드 계정에 접근하지 않아요. 로그인 정보·비밀번호·쿠키를 묻지도 받지도 않아요.",
       "스크립트는 내가 직접 스레드 탭의 콘솔에 붙여 넣어 실행하고, 내 브라우저 안에서만 돌아요. 어떤 데이터도 밖으로 보내지 않아요.",
-      "스크립트는 목록만 보여 주고 아무도 언팔로우하지 않아요. 언팔로우는 결과를 보고 내가 직접 해요.",
+      "스크립트는 목록을 보여 주고 내 화면에 표시만 해요. 아무도 언팔로우하지 않고, 언팔로우는 내가 직접 해요.",
     ],
   },
   steps: {
@@ -37,7 +37,8 @@ const ko = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      done: "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F…",
+      done: "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가…",
+      badge: "뒷삭하였음",
     },
     items: [
       {
@@ -57,8 +58,8 @@ const ko = {
         body: "팔로워와 팔로잉 목록을 끝까지 내려 모은 뒤, 나를 팔로우하지 않는 계정과 프로필 주소를 표로 보여 줘요. 표 아래에는 복사하기 쉽게 계정 이름만 한 줄씩 나와요. 계정이 많으면 몇 분 걸려요.",
       },
       {
-        title: "Cmd+F로 찾아 직접 언팔로우",
-        body: "계정 이름을 복사하고, 팔로워 창의 ‘팔로잉’ 탭 제목을 한 번 눌러요. 창은 그대로 둔 채 페이지가 선택돼요. Cmd+F(Windows는 Ctrl+F)에 붙여 넣어 그 계정을 찾고 ‘팔로잉’ → ‘언팔로우’를 눌러요. 목록은 보이는 부분만 화면에 있어서, 안 찾아지면 목록을 조금 내린 뒤 다시 찾아요. 표의 주소로 프로필에 가서 언팔로우해도 돼요.",
+        title: "표시된 계정을 직접 언팔로우",
+        body: "스크립트가 끝나면 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄이 붉게 칠해지고 ‘뒷삭하였음’이 붙어요. 목록을 내리며 표시된 계정의 ‘팔로잉’ → ‘언팔로우’를 눌러요. 특정 계정을 바로 찾으려면 ‘팔로잉’ 탭 제목을 한 번 누른 뒤 Cmd+F(Windows는 Ctrl+F)로 아이디를 찾아요. 표시는 새로 고치면 사라져요.",
       },
     ],
   },
@@ -71,7 +72,7 @@ const ko = {
     copy: "스크립트 복사",
     copied: "스크립트를 복사했어요. 스레드 탭의 콘솔에 붙여 넣으세요.",
     copyFailed: "복사하지 못했어요. 미리보기에서 직접 선택해 복사해 주세요.",
-    note: "목록만 보여 주고 아무도 언팔로우하지 않아요.",
+    note: "목록을 보여 주고 화면에 표시만 해요. 아무도 언팔로우하지 않아요.",
     preview: "스크립트 미리보기",
   },
   faq: {
@@ -123,7 +124,7 @@ const en: Dictionary = {
   },
   header: { name: "Threads Follow Checker", theme: "Theme", light: "Light", dark: "Dark", system: "System", language: "Language" },
   hero: {
-    title: "Who doesn't follow you back?\nFind out in a minute",
+    title: "Find Threads accounts\nthat don't follow you back",
     subtitle: "Find Threads accounts you follow that don't follow you back. Just copy one script and paste it.",
     meme: "Who dared to unfollow me~?",
   },
@@ -132,7 +133,7 @@ const en: Dictionary = {
     items: [
       "This site doesn't access your Threads account. It never asks for or receives your login, password, or cookies.",
       "You paste the script into the console of your own Threads tab, and it runs only in your browser. No data is sent anywhere.",
-      "The script only shows a list and never unfollows anyone. You unfollow by hand after checking the result.",
+      "The script only shows a list and marks accounts on your screen. It never unfollows anyone; you unfollow by hand.",
     ],
   },
   steps: {
@@ -147,7 +148,8 @@ const en: Dictionary = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      done: "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F…",
+      done: "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가…",
+      badge: "뒷삭하였음",
     },
     items: [
       {
@@ -167,8 +169,8 @@ const en: Dictionary = {
         body: "It scrolls through your followers and following, then shows a table of accounts that don't follow you back with their profile links. Below the table, the account names are listed one per line for easy copying. Large lists can take a few minutes.",
       },
       {
-        title: "Find with Cmd+F and unfollow by hand",
-        body: "Copy an account name, then click the ‘Following’ tab title in the dialog once. The page gets focus while the dialog stays open. Paste it into Cmd+F (Ctrl+F on Windows) to find the account, then click ‘Following’ → ‘Unfollow’. Only visible rows are on the page, so if it isn't found, scroll the list a bit and search again. You can also open the profile link from the table and unfollow there.",
+        title: "Unfollow the marked accounts by hand",
+        body: "When the script finishes, rows in your Following list that don't follow you back turn red with a ‘뒷삭하였음’ (unfollowed you) badge. Scroll the list and click ‘Following’ → ‘Unfollow’ on the marked accounts. To jump to one, click the ‘Following’ tab title once, then search its name with Cmd+F (Ctrl+F on Windows). The marks disappear when you reload.",
       },
     ],
   },
@@ -181,7 +183,7 @@ const en: Dictionary = {
     copy: "Copy script",
     copied: "Script copied. Paste it into the console of your Threads tab.",
     copyFailed: "Couldn't copy. Please select and copy it from the preview.",
-    note: "It only shows a list and never unfollows anyone.",
+    note: "It only lists and marks accounts. It never unfollows anyone.",
     preview: "Script preview",
   },
   faq: {

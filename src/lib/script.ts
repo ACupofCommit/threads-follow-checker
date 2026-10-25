@@ -41,8 +41,8 @@ const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지
 // 쓰는 법
 // 1. 스레드 내 프로필에서 "OO followers"를 눌러 팔로워/팔로잉 대화상자를 연다.
 // 2. 개발자 도구 콘솔에 이 스크립트 전체를 붙여 넣고 Enter.
-// 3. 결과의 계정 이름을 복사해 팔로잉 탭에서 Cmd+F(Windows 는 Ctrl+F)로 찾아 직접 언팔로우한다.
-//    이 스크립트는 목록만 보여 주고 아무도 언팔로우하지 않는다.
+// 3. 팔로잉 목록에서 "뒷삭하였음" 표시가 붙은 계정을 직접 언팔로우한다.
+//    이 스크립트는 목록을 보여 주고 화면에 표시만 할 뿐, 아무도 언팔로우하지 않는다.
 
 (async () => {
 __CONFIG__
@@ -100,8 +100,66 @@ __CONFIG__
 
   // 계정 이름만 따로 찍어 복사하기 쉽게 한다.
   if (targets.length > 0) console.log(targets.join("\\n"));
+
+  // 팔로잉 목록에서 나를 팔로우하지 않는 계정 줄에 "뒷삭하였음"을 표시한다.
+  // 화면 모양만 바꾸고 스레드에는 아무것도 보내지 않는다. 새로 고치면 사라진다.
+  // 스레드 화면을 그리는 React 와 부딪히지 않게 요소를 끼워 넣지 않고 속성과 CSS(::after)로만 표시한다.
+  // 목록은 스크롤할 때마다 줄을 다시 그리고 같은 요소에 다른 계정을 넣기도 하므로, 바뀔 때마다 다시 맞춘다.
+  const targetSet = new Set(targets);
+  const ROW = "data-nonfollower";
+  const NAME = "data-nonfollower-name";
+  window.__nonFollowerObserver?.disconnect();
+  document.getElementById("nonfollower-style")?.remove();
+  const style = document.createElement("style");
+  style.id = "nonfollower-style";
+  style.textContent = [
+    "[" + ROW + "] { background: rgba(255, 59, 48, 0.14) !important; box-shadow: inset 3px 0 0 #ff3b30; }",
+    "[" + NAME + "]::after { content: '뒷삭하였음'; display: inline-block; margin-left: 6px; padding: 1px 6px;" +
+      " border-radius: 999px; background: #ff3b30; color: #fff; font-size: 11px; font-weight: 700; line-height: 16px; vertical-align: middle; }",
+  ].join("\\n");
+  document.head.appendChild(style);
+
+  const userOf = (a) => a.getAttribute("href").slice(2).split(/[/?]/)[0];
+  const rowOfLink = (a) => {
+    let el = a;
+    while (el && el !== dialog() && !el.querySelector('[role="button"]')) el = el.parentElement;
+    return el && el !== dialog() ? el : null;
+  };
+  const mark = () => {
+    const d = dialog();
+    if (!d) return;
+    // 이전에 붙인 표시가 지금 그 자리의 계정과 안 맞으면 뗀다.
+    d.querySelectorAll("[" + ROW + "]").forEach((row) => {
+      const a = row.querySelector('a[href^="/@"]');
+      if (!a || userOf(a) !== row.getAttribute(ROW)) row.removeAttribute(ROW);
+    });
+    d.querySelectorAll("[" + NAME + "]").forEach((a) => {
+      if (userOf(a) !== a.getAttribute(NAME)) a.removeAttribute(NAME);
+    });
+    d.querySelectorAll('a[href^="/@"]').forEach((a) => {
+      const u = userOf(a);
+      if (!targetSet.has(u)) return;
+      const row = rowOfLink(a);
+      if (row) row.setAttribute(ROW, u);
+      // 사진 링크가 아니라 아이디 글자가 있는 링크에만 붙인다.
+      if (a.innerText.trim().startsWith(u)) a.setAttribute(NAME, u);
+    });
+  };
+  let queued = false;
+  const observer = new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      mark();
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.__nonFollowerObserver = observer;
+  mark();
+
   console.log(
-    "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F(Windows는 Ctrl+F)로 찾아 직접 언팔로우하세요.",
+    "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가 붙은 계정을 직접 언팔로우하세요. 표시는 새로 고치면 사라집니다.",
   );
 })();
 `;
