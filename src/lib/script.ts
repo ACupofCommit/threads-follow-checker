@@ -5,21 +5,16 @@ export type ScriptOptions = {
   /** 맞팔이 아니어도 계속 팔로우할 계정. */
   keep: string[];
   unfollow: boolean;
-  maxUnfollow: number;
-  minDelaySec: number;
-  maxDelaySec: number;
 };
 
-export const UNFOLLOW_LIMIT = { min: 1, max: 20, default: 10 };
-export const DELAY_LIMIT = { min: 5, max: 300, defaultMin: 20, defaultMax: 45 };
+/**
+ * 자동 언팔로우는 한 번 실행에 2명까지만, 사이 간격은 2~4초로 고정한다.
+ * 사람이 손으로 두 번 누르는 정도에 맞춰 Meta 의 자동화 제한을 피하려는 것이라 사용자가 바꾸지 못하게 한다.
+ */
+export const UNFOLLOW_PER_RUN = 2;
+export const UNFOLLOW_DELAY_SEC = { min: 2, max: 4 };
 
-export const DEFAULT_OPTIONS: ScriptOptions = {
-  keep: [],
-  unfollow: false,
-  maxUnfollow: UNFOLLOW_LIMIT.default,
-  minDelaySec: DELAY_LIMIT.defaultMin,
-  maxDelaySec: DELAY_LIMIT.defaultMax,
-};
+export const DEFAULT_OPTIONS: ScriptOptions = { keep: [], unfollow: false };
 
 const SITE = "https://threads-follow-checker.commit2.app";
 
@@ -35,30 +30,16 @@ export function parseKeep(text: string): string[] {
   return [...new Set(names)];
 }
 
-function clamp(value: number, min: number, max: number, fallback: number): number {
-  if (!Number.isFinite(value)) return fallback;
-  return Math.min(max, Math.max(min, Math.round(value)));
-}
-
-/** 폼 값을 허용 범위로 맞춘다. 최소 간격이 최대보다 크면 둘을 바꾼다. */
-export function normalizeOptions(options: ScriptOptions): ScriptOptions {
-  const maxUnfollow = clamp(options.maxUnfollow, UNFOLLOW_LIMIT.min, UNFOLLOW_LIMIT.max, UNFOLLOW_LIMIT.default);
-  let minDelaySec = clamp(options.minDelaySec, DELAY_LIMIT.min, DELAY_LIMIT.max, DELAY_LIMIT.defaultMin);
-  let maxDelaySec = clamp(options.maxDelaySec, DELAY_LIMIT.min, DELAY_LIMIT.max, DELAY_LIMIT.defaultMax);
-  if (minDelaySec > maxDelaySec) [minDelaySec, maxDelaySec] = [maxDelaySec, minDelaySec];
-  return { keep: options.keep, unfollow: options.unfollow, maxUnfollow, minDelaySec, maxDelaySec };
-}
-
 function configBlock(options: ScriptOptions): string {
-  const o = normalizeOptions(options);
+  const o = options;
   // 계정 이름은 JSON.stringify 로 넣어 따옴표·특수 문자가 코드로 새지 않게 한다.
   const keep = o.keep.length === 0 ? "[]" : `[\n${o.keep.map((name) => `      ${JSON.stringify(name)},`).join("\n")}\n    ]`;
   return [
     "  const CONFIG = {",
     `    unfollow: ${o.unfollow},${o.unfollow ? "           // 실제로 언팔로우한다" : "          // true 면 실제로 언팔로우한다"}`,
-    `    maxUnfollow: ${o.maxUnfollow},          // 한 번 실행에 언팔로우할 최대 계정 수`,
-    `    minDelayMs: ${o.minDelaySec * 1000},       // 언팔로우 사이 최소 간격`,
-    `    maxDelayMs: ${o.maxDelaySec * 1000},       // 언팔로우 사이 최대 간격`,
+    `    maxUnfollow: ${UNFOLLOW_PER_RUN},           // 한 번 실행에 언팔로우할 최대 계정 수`,
+    `    minDelayMs: ${UNFOLLOW_DELAY_SEC.min * 1000},        // 언팔로우 사이 최소 간격`,
+    `    maxDelayMs: ${UNFOLLOW_DELAY_SEC.max * 1000},        // 언팔로우 사이 최대 간격`,
     `    keep: ${keep}, // 맞팔이 아니어도 계속 팔로우할 계정`,
     "  };",
     "",

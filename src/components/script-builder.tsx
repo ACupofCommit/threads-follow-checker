@@ -16,12 +16,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { format, type Dictionary } from "@/lib/i18n";
-import { DEFAULT_OPTIONS, DELAY_LIMIT, UNFOLLOW_LIMIT, buildScript, normalizeOptions, parseKeep } from "@/lib/script";
+import { UNFOLLOW_DELAY_SEC, UNFOLLOW_PER_RUN, buildScript, parseKeep } from "@/lib/script";
 
 /** 옵션 폼과, 그 값이 들어간 스크립트의 복사·미리보기. */
 export function ScriptBuilder({ t }: { t: Dictionary }) {
@@ -30,19 +29,10 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
   const [keepText, setKeepText] = useState("");
   const [unfollow, setUnfollow] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [maxUnfollow, setMaxUnfollow] = useState(String(DEFAULT_OPTIONS.maxUnfollow));
-  const [minDelay, setMinDelay] = useState(String(DEFAULT_OPTIONS.minDelaySec));
-  const [maxDelay, setMaxDelay] = useState(String(DEFAULT_OPTIONS.maxDelaySec));
 
   const keep = useMemo(() => parseKeep(keepText), [keepText]);
-  const options = normalizeOptions({
-    keep,
-    unfollow,
-    maxUnfollow: Number(maxUnfollow),
-    minDelaySec: Number(minDelay),
-    maxDelaySec: Number(maxDelay),
-  });
-  const script = buildScript(options);
+  const script = buildScript({ keep, unfollow });
+  const limit = { count: UNFOLLOW_PER_RUN, min: UNFOLLOW_DELAY_SEC.min, max: UNFOLLOW_DELAY_SEC.max };
 
   // 켜는 쪽만 경고를 먼저 확인받는다. 끄는 건 바로 끈다.
   function onUnfollowChange(checked: boolean) {
@@ -51,7 +41,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
   }
 
   async function copy() {
-    track("script_copy", { unfollow: options.unfollow });
+    track("script_copy", { unfollow });
     try {
       await navigator.clipboard.writeText(script);
       toast.success(o.copied);
@@ -85,7 +75,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1">
               <Label htmlFor={`${id}-unfollow`}>{o.unfollowLabel}</Label>
-              <p className="text-muted-foreground text-xs sm:text-sm">{o.unfollowHint}</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">{format(o.unfollowHint, limit)}</p>
             </div>
             <Switch id={`${id}-unfollow`} checked={unfollow} onCheckedChange={onUnfollowChange} className="mt-0.5" />
           </div>
@@ -95,53 +85,10 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
               <div className="bg-destructive/10 text-destructive flex gap-2 rounded-md p-3 text-sm">
                 <TriangleAlert className="mt-0.5 size-4 shrink-0" />
                 <p className="break-keep">
-                  <strong className="font-semibold">{o.warningTitle}.</strong> {o.warningBody}
+                  <strong className="font-semibold">{o.warningTitle}.</strong> {format(o.warningBody, limit)}
                 </p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor={`${id}-max`}>{o.maxLabel}</Label>
-                  <Input
-                    id={`${id}-max`}
-                    type="number"
-                    inputMode="numeric"
-                    min={UNFOLLOW_LIMIT.min}
-                    max={UNFOLLOW_LIMIT.max}
-                    value={maxUnfollow}
-                    onChange={(event) => setMaxUnfollow(event.target.value)}
-                    onBlur={() => setMaxUnfollow(String(options.maxUnfollow))}
-                  />
-                  <p className="text-muted-foreground text-xs">{format(o.maxHint, { min: UNFOLLOW_LIMIT.min, max: UNFOLLOW_LIMIT.max })}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor={`${id}-min`}>{o.delayLabel}</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id={`${id}-min`}
-                      aria-label={o.delayMin}
-                      type="number"
-                      inputMode="numeric"
-                      min={DELAY_LIMIT.min}
-                      max={DELAY_LIMIT.max}
-                      value={minDelay}
-                      onChange={(event) => setMinDelay(event.target.value)}
-                      onBlur={() => setMinDelay(String(options.minDelaySec))}
-                    />
-                    <span className="text-muted-foreground">~</span>
-                    <Input
-                      aria-label={o.delayMax}
-                      type="number"
-                      inputMode="numeric"
-                      min={DELAY_LIMIT.min}
-                      max={DELAY_LIMIT.max}
-                      value={maxDelay}
-                      onChange={(event) => setMaxDelay(event.target.value)}
-                      onBlur={() => setMaxDelay(String(options.maxDelaySec))}
-                    />
-                  </div>
-                  <p className="text-muted-foreground text-xs">{format(o.delayHint, { min: DELAY_LIMIT.min, max: DELAY_LIMIT.max })}</p>
-                </div>
-              </div>
+              <p className="text-muted-foreground text-sm break-keep">{format(o.limit, limit)}</p>
             </>
           )}
         </div>
@@ -151,7 +98,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
             <Copy /> {o.copy}
           </Button>
           <p className="text-muted-foreground text-center text-xs">
-            {options.unfollow ? format(o.modeUnfollow, { count: options.maxUnfollow }) : o.modeList}
+            {unfollow ? format(o.modeUnfollow, limit) : o.modeList}
           </p>
         </div>
 
@@ -170,7 +117,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{o.warningTitle}</AlertDialogTitle>
-            <AlertDialogDescription className="break-keep">{o.warningBody}</AlertDialogDescription>
+            <AlertDialogDescription className="break-keep">{format(o.warningBody, limit)}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{o.cancel}</AlertDialogCancel>
