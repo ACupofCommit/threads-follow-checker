@@ -14,7 +14,7 @@ const TEXT = "#f2f2f2";
 const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
 
 /** 주소창이 있는 브라우저 창 틀. */
-function Browser({ children, url = "threads.com/@me" }: { children: ReactNode; url?: string }) {
+function Browser({ children, url = "threads.com/@acupofcommit" }: { children: ReactNode; url?: string }) {
   return (
     <svg viewBox="0 0 320 180" role="img" className="h-auto w-full rounded-lg" fontFamily="inherit">
       <rect width="320" height="180" rx="8" fill={BG} />
@@ -146,11 +146,11 @@ function FollowDialog({ l, tab = "followers", flagged = [] }: { l: Labels; tab?:
   );
 }
 
-/** 2. threads.com 에 로그인한 화면(내 프로필). 팔로워 창은 스크립트가 연다. */
-export function SignedInIllustration({ l }: { l: Labels }) {
+/** 로그인한 스레드 내 프로필 화면(차아린 계정 예시). 2·3단계 그림이 함께 쓴다. */
+function ProfilePage({ l }: { l: Labels }) {
   const p = l.profile;
   return (
-    <Browser url="threads.com/@acupofcommit">
+    <g>
       {/* 왼쪽 메뉴 */}
       <text x="12" y="36" fontSize="10" fontWeight="800" fontStyle="italic" fill={TEXT}>
         threads
@@ -207,6 +207,15 @@ export function SignedInIllustration({ l }: { l: Labels }) {
       <text x="288" y="158.3" fontSize="5.8" fontWeight="600" fill={TEXT} textAnchor="middle">
         {p.post}
       </text>
+    </g>
+  );
+}
+
+/** 2. threads.com 에 로그인한 화면(내 프로필). 팔로워 창은 스크립트가 연다. */
+export function SignedInIllustration({ l }: { l: Labels }) {
+  return (
+    <Browser>
+      <ProfilePage l={l} />
     </Browser>
   );
 }
@@ -215,9 +224,10 @@ export function SignedInIllustration({ l }: { l: Labels }) {
 export function OpenConsoleIllustration({ l }: { l: Labels }) {
   return (
     <Browser>
-      <g transform="translate(-58 0) scale(1)">
-        <FollowDialog l={l} />
-      </g>
+      {/* 2단계와 같은 프로필 화면. 오른쪽에 개발자 도구가 열려 왼쪽만 보인다. */}
+      <svg x="0" y="20" width="196" height="160" viewBox="0 20 196 160" overflow="hidden">
+        <ProfilePage l={l} />
+      </svg>
       <rect x="196" y="20" width="124" height="160" fill="#202124" />
       <line x1="196" x2="196" y1="20" y2="180" stroke="#3c3c3c" />
       <rect x="196" y="20" width="124" height="16" fill="#292a2d" />
