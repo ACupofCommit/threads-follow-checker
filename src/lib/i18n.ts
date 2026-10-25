@@ -60,16 +60,16 @@ const ko = {
     },
     items: [
       {
-        title: "PC에서 threads.com 로그인",
-        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인해 두면 돼요. 어느 화면에 있든 스크립트가 내 프로필로 이동해 “팔로워 OO명”을 눌러 팔로워·팔로잉 창을 열어요.",
-      },
-      {
         title: "스크립트 복사하고 AI로 검사",
-        body: "아래 ‘스크립트 만들기’에서 ‘스크립트 복사’를 누르고, ChatGPT·Claude·Gemini 같은 AI 채팅에 이렇게 물어본 뒤 스크립트를 붙여 넣어요. 위험한 부분이 없다는 걸 확인하면 다음 단계로 가요.",
+        body: "이 도구는 threads.com 에 로그인한 탭의 개발자 도구에 스크립트를 붙여 넣어 쓰는 방식이에요. 그래서 붙여 넣기 전에 스크립트가 안전한지부터 검사해요. 아래 ‘스크립트 만들기’에서 ‘스크립트 복사’를 누르고, ChatGPT·Claude·Gemini 같은 AI 채팅에 이렇게 물어본 뒤 스크립트를 붙여 넣어요.",
         prompt:
           "threads.com 개발자 도구 콘솔에 붙여 넣으려는 스크립트야. 외부로 데이터를 보내거나, 쿠키·토큰을 읽거나, 나 대신 팔로우·게시 같은 행동을 하는 위험한 코드가 있는지 검사해 줘.",
         warning:
           "이 사이트의 스크립트는 안전하지만, 누구의 스크립트도 그냥 믿지 마세요. 이 사이트처럼 꾸민 피싱 사이트가 계정을 빼앗는 악성 스크립트를 붙여 넣게 할 수 있어요. 개발자 도구에 무엇이든 붙여 넣기 전에는 꼭 검사하세요.",
+      },
+      {
+        title: "PC에서 threads.com 로그인",
+        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인해 두면 돼요. 어느 화면에 있든 스크립트가 내 프로필로 이동해 “팔로워 OO명”을 눌러 팔로워·팔로잉 창을 열어요.",
       },
       {
         title: "개발자 도구 콘솔 열기",
@@ -197,16 +197,16 @@ const en: Dictionary = {
     },
     items: [
       {
-        title: "Sign in to threads.com on desktop",
-        body: "Just sign in to threads.com in a desktop browser (Chrome recommended). Wherever you are on Threads, the script goes to your profile and clicks “OO followers” to open the followers/following dialog.",
-      },
-      {
         title: "Copy the script and check it with AI",
-        body: "Click ‘Copy script’ in ‘Build your script’ below, then ask an AI chat like ChatGPT, Claude, or Gemini something like this and paste the script. Move on only after confirming nothing is dangerous.",
+        body: "This tool works by pasting a script into the developer tools of a tab signed in to threads.com, so first check that the script is safe. Click ‘Copy script’ in ‘Build your script’ below, then ask an AI chat like ChatGPT, Claude, or Gemini something like this and paste the script.",
         prompt:
           "I'm about to paste this script into the developer console on threads.com. Check whether it has anything dangerous: sending data out, reading cookies or tokens, or acting on my behalf like following or posting.",
         warning:
           "The script on this site is safe, but don't blindly trust anyone's script. Phishing sites that look like this one can trick you into pasting malicious code that takes over your account. Always check before pasting anything into developer tools.",
+      },
+      {
+        title: "Sign in to threads.com on desktop",
+        body: "Just sign in to threads.com in a desktop browser (Chrome recommended). Wherever you are on Threads, the script goes to your profile and clicks “OO followers” to open the followers/following dialog.",
       },
       {
         title: "Open the developer console",

@@ -146,7 +146,7 @@ function FollowDialog({ l, tab = "followers", flagged = [] }: { l: Labels; tab?:
   );
 }
 
-/** 1. threads.com 에 로그인한 화면(내 프로필). 팔로워 창은 스크립트가 연다. */
+/** 2. threads.com 에 로그인한 화면(내 프로필). 팔로워 창은 스크립트가 연다. */
 export function SignedInIllustration({ l }: { l: Labels }) {
   const p = l.profile;
   return (
@@ -245,7 +245,7 @@ export function OpenConsoleIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 2. 복사한 스크립트를 AI 채팅에 붙여 넣어 안전한지 검사. 특정 AI 서비스가 아닌 일반 채팅 화면이다. */
+/** 1. 복사한 스크립트를 AI 채팅에 붙여 넣어 안전한지 검사. 특정 AI 서비스가 아닌 일반 채팅 화면이다. */
 export function AiCheckIllustration({ l }: { l: Labels }) {
   const a = l.ai;
   return (
@@ -389,8 +389,8 @@ export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
 }
 
 export const STEP_ILLUSTRATIONS = [
-  SignedInIllustration,
   AiCheckIllustration,
+  SignedInIllustration,
   OpenConsoleIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
