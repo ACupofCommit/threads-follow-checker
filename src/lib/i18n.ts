@@ -22,7 +22,7 @@ const ko = {
     items: [
       "이 사이트는 스레드 계정에 접근하지 않아요. 로그인 정보·비밀번호·쿠키를 묻지도 받지도 않아요.",
       "스크립트는 내가 직접 스레드 탭의 콘솔에 붙여 넣어 실행하고, 내 브라우저 안에서만 돌아요. 어떤 데이터도 밖으로 보내지 않아요.",
-      "기본은 목록만 보여 줘요. 자동 언팔로우는 직접 켜야만 동작해요.",
+      "스크립트는 목록만 보여 주고 아무도 언팔로우하지 않아요. 언팔로우는 결과를 보고 내가 직접 해요.",
     ],
   },
   steps: {
@@ -37,7 +37,7 @@ const ko = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      dryRun: "DRY_RUN: 아무도 언팔로우하지 않았습니다.",
+      done: "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F…",
     },
     items: [
       {
@@ -54,7 +54,11 @@ const ko = {
       },
       {
         title: "결과 표 확인",
-        body: "팔로워와 팔로잉 목록을 끝까지 내려 모은 뒤, 나를 팔로우하지 않는 계정과 프로필 주소를 표로 보여 줘요. 계정이 많으면 몇 분 걸려요.",
+        body: "팔로워와 팔로잉 목록을 끝까지 내려 모은 뒤, 나를 팔로우하지 않는 계정과 프로필 주소를 표로 보여 줘요. 표 아래에는 복사하기 쉽게 계정 이름만 한 줄씩 나와요. 계정이 많으면 몇 분 걸려요.",
+      },
+      {
+        title: "Cmd+F로 찾아 직접 언팔로우",
+        body: "계정 이름을 복사하고, 팔로워 창의 ‘팔로잉’ 탭 제목을 한 번 눌러요. 창은 그대로 둔 채 페이지가 선택돼요. Cmd+F(Windows는 Ctrl+F)에 붙여 넣어 그 계정을 찾고 ‘팔로잉’ → ‘언팔로우’를 눌러요. 목록은 보이는 부분만 화면에 있어서, 안 찾아지면 목록을 조금 내린 뒤 다시 찾아요. 표의 주소로 프로필에 가서 언팔로우해도 돼요.",
       },
     ],
   },
@@ -64,20 +68,10 @@ const ko = {
     keepHint: "맞팔이 아니어도 결과에서 뺄 계정이에요. 줄바꿈·쉼표로 나눠 적고, @이름이나 프로필 주소도 돼요.",
     keepPlaceholder: "@threads\n@zuck",
     keepCount: "{count}개 계정을 결과에서 빼요",
-    advanced: "고급",
-    unfollowLabel: "자동 언팔로우 켜기",
-    unfollowHint: "목록을 확인한 뒤, 찾은 계정 중 앞의 {count}명을 언팔로우해요.",
-    warningTitle: "계정이 제한될 수 있어요",
-    warningBody:
-      "Meta는 자동화된 대량 행동을 제한해요. 한 번에 많이 언팔로우하면 “작업이 제한됨” 경고나 계정 제한을 받을 수 있어요. 그래서 한 번 실행에 {count}명까지만 언팔로우해요. 연달아 다시 실행하지 말고 하루에 조금씩만 하세요. 언팔로우가 반영되지 않으면 스크립트가 바로 멈춰요.",
-    confirmAction: "켜기",
-    cancel: "취소",
-    limit: "한 번 실행에 최대 {count}명만 언팔로우하고, 사이에 {min}~{max}초 쉬어요. 더 하려면 시간을 두고 다시 실행하세요.",
     copy: "스크립트 복사",
     copied: "스크립트를 복사했어요. 스레드 탭의 콘솔에 붙여 넣으세요.",
     copyFailed: "복사하지 못했어요. 미리보기에서 직접 선택해 복사해 주세요.",
-    modeList: "목록만 보기",
-    modeUnfollow: "최대 {count}명 자동 언팔로우",
+    note: "목록만 보여 주고 아무도 언팔로우하지 않아요.",
     preview: "스크립트 미리보기",
   },
   faq: {
@@ -85,7 +79,11 @@ const ko = {
     items: [
       {
         q: "안전한가요?",
-        a: "이 사이트는 계정 정보를 받지 않고, 스크립트는 내 브라우저 안에서 스레드 화면을 읽기만 해요. 외부로 보내는 코드가 없다는 건 미리보기에서 직접 확인할 수 있어요. 다만 자동 언팔로우는 Meta 정책상 계정 제한 위험이 있으니 조심해서 쓰세요.",
+        a: "이 사이트는 계정 정보를 받지 않고, 스크립트는 내 브라우저 안에서 스레드 화면을 읽기만 해요. 외부로 보내는 코드가 없다는 건 미리보기에서 직접 확인할 수 있어요.",
+      },
+      {
+        q: "자동으로 언팔로우해 주지는 않나요?",
+        a: "Meta는 짧은 시간에 몰리는 언팔로우를 자동화로 보고 계정을 제한할 수 있어요. 계정을 지키려고 스크립트는 찾기만 하고, 언팔로우는 직접 하도록 했어요.",
       },
       {
         q: "모바일에서도 되나요?",
@@ -134,7 +132,7 @@ const en: Dictionary = {
     items: [
       "This site doesn't access your Threads account. It never asks for or receives your login, password, or cookies.",
       "You paste the script into the console of your own Threads tab, and it runs only in your browser. No data is sent anywhere.",
-      "By default it only shows a list. Auto-unfollow works only if you turn it on.",
+      "The script only shows a list and never unfollows anyone. You unfollow by hand after checking the result.",
     ],
   },
   steps: {
@@ -149,7 +147,7 @@ const en: Dictionary = {
       resultTitle: "나를 팔로우하지 않는 계정 3명:",
       account: "계정",
       address: "주소",
-      dryRun: "DRY_RUN: 아무도 언팔로우하지 않았습니다.",
+      done: "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F…",
     },
     items: [
       {
@@ -166,7 +164,11 @@ const en: Dictionary = {
       },
       {
         title: "Check the result table",
-        body: "It scrolls through your followers and following, then shows a table of accounts that don't follow you back with their profile links. Large lists can take a few minutes.",
+        body: "It scrolls through your followers and following, then shows a table of accounts that don't follow you back with their profile links. Below the table, the account names are listed one per line for easy copying. Large lists can take a few minutes.",
+      },
+      {
+        title: "Find with Cmd+F and unfollow by hand",
+        body: "Copy an account name, then click the ‘Following’ tab title in the dialog once. The page gets focus while the dialog stays open. Paste it into Cmd+F (Ctrl+F on Windows) to find the account, then click ‘Following’ → ‘Unfollow’. Only visible rows are on the page, so if it isn't found, scroll the list a bit and search again. You can also open the profile link from the table and unfollow there.",
       },
     ],
   },
@@ -176,20 +178,10 @@ const en: Dictionary = {
     keepHint: "These are left out of the result even if they don't follow back. Separate with new lines or commas; @names and profile links work too.",
     keepPlaceholder: "@threads\n@zuck",
     keepCount: "{count} accounts will be left out",
-    advanced: "Advanced",
-    unfollowLabel: "Turn on auto-unfollow",
-    unfollowHint: "After listing them, unfollow the first {count} accounts found.",
-    warningTitle: "Your account may get restricted",
-    warningBody:
-      "Meta limits automated bulk actions. Unfollowing many accounts at once can trigger a “We restrict certain activity” warning or account limits. So each run unfollows at most {count} accounts. Don't run it again back to back; do a little each day. The script stops right away if an unfollow doesn't go through.",
-    confirmAction: "Turn on",
-    cancel: "Cancel",
-    limit: "Each run unfollows at most {count} accounts, waiting {min}–{max} seconds between them. To do more, wait a while and run it again.",
     copy: "Copy script",
     copied: "Script copied. Paste it into the console of your Threads tab.",
     copyFailed: "Couldn't copy. Please select and copy it from the preview.",
-    modeList: "List only",
-    modeUnfollow: "Auto-unfollow up to {count}",
+    note: "It only shows a list and never unfollows anyone.",
     preview: "Script preview",
   },
   faq: {
@@ -197,7 +189,11 @@ const en: Dictionary = {
     items: [
       {
         q: "Is it safe?",
-        a: "This site never receives your account info, and the script only reads the Threads page inside your browser. You can check in the preview that nothing is sent out. Auto-unfollow can get your account restricted under Meta's policies, so use it carefully.",
+        a: "This site never receives your account info, and the script only reads the Threads page inside your browser. You can check in the preview that nothing is sent out.",
+      },
+      {
+        q: "Can it unfollow automatically?",
+        a: "Meta may treat a burst of unfollows as automation and restrict your account. To keep your account safe, the script only finds accounts and you unfollow by hand.",
       },
       {
         q: "Does it work on mobile?",

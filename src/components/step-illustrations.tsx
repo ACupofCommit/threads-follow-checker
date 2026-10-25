@@ -57,11 +57,25 @@ function Key({ x, y, label, highlight }: { x: number; y: number; label: string; 
 }
 
 /** 팔로워·팔로잉 대화상자의 한 줄. */
-function Row({ y, name, button, filled }: { y: number; name: string; button: string; filled?: boolean }) {
+function Row({
+  y,
+  name,
+  button,
+  filled,
+  found,
+}: {
+  y: number;
+  name: string;
+  button: string;
+  filled?: boolean;
+  /** Cmd+F 로 찾은 줄. 이름을 찾기 강조색으로 칠한다. */
+  found?: boolean;
+}) {
   return (
     <g>
       <circle cx="96" cy={y} r="7" fill="#4a4a4a" />
-      <text x="109" y={y - 1} fontSize="7.5" fontWeight="600" fill={TEXT}>
+      {found && <rect x="107.5" y={y - 8} width={name.length * 4.6 + 3} height="10" rx="1.5" fill="#ff9632" />}
+      <text x="109" y={y - 1} fontSize="7.5" fontWeight="600" fill={found ? "#000" : TEXT}>
         {name}
       </text>
       <rect x="109" y={y + 2} width="34" height="4" rx="2" fill="#3a3a3a" />
@@ -74,28 +88,40 @@ function Row({ y, name, button, filled }: { y: number; name: string; button: str
   );
 }
 
-function FollowDialog({ l, x = 0 }: { l: Labels; x?: number }) {
+function FollowDialog({ l, tab = "followers", found }: { l: Labels; tab?: "followers" | "following"; found?: string }) {
+  const onFollowing = tab === "following";
   return (
-    <g transform={`translate(${x} 0)`}>
+    <g>
       <rect x="80" y="28" width="170" height="146" rx="10" fill={PANEL} stroke={LINE} />
-      <text x="122" y="44" fontSize="8" fontWeight="700" fill={TEXT} textAnchor="middle">
+      <text x="122" y="44" fontSize="8" fontWeight={onFollowing ? 600 : 700} fill={onFollowing ? MUTED : TEXT} textAnchor="middle">
         {l.followers}
       </text>
-      <text x="122" y="54" fontSize="6.5" fill={TEXT} textAnchor="middle">
+      <text x="122" y="54" fontSize="6.5" fill={onFollowing ? MUTED : TEXT} textAnchor="middle">
         139
       </text>
-      <text x="208" y="44" fontSize="8" fontWeight="600" fill={MUTED} textAnchor="middle">
+      <text x="208" y="44" fontSize="8" fontWeight={onFollowing ? 700 : 600} fill={onFollowing ? TEXT : MUTED} textAnchor="middle">
         {l.following}
       </text>
-      <text x="208" y="54" fontSize="6.5" fill={MUTED} textAnchor="middle">
+      <text x="208" y="54" fontSize="6.5" fill={onFollowing ? TEXT : MUTED} textAnchor="middle">
         141
       </text>
-      <line x1="80" x2="165" y1="60" y2="60" stroke={TEXT} strokeWidth="1.5" />
-      <line x1="165" x2="250" y1="60" y2="60" stroke={LINE} />
-      <Row y={76} name="user_a" button={l.followBack} filled />
-      <Row y={102} name="user_b" button={l.followingButton} />
-      <Row y={128} name="user_c" button={l.followBack} filled />
-      <Row y={154} name="user_d" button={l.followingButton} />
+      <line x1="80" x2="250" y1="60" y2="60" stroke={LINE} />
+      <line x1={onFollowing ? 165 : 80} x2={onFollowing ? 250 : 165} y1="60" y2="60" stroke={TEXT} strokeWidth="1.5" />
+      {onFollowing ? (
+        <>
+          <Row y={76} name="user_a" button={l.followingButton} />
+          <Row y={102} name="user_b" button={l.followingButton} found={found === "user_b"} />
+          <Row y={128} name="user_c" button={l.followingButton} />
+          <Row y={154} name="user_d" button={l.followingButton} />
+        </>
+      ) : (
+        <>
+          <Row y={76} name="user_a" button={l.followBack} filled />
+          <Row y={102} name="user_b" button={l.followingButton} />
+          <Row y={128} name="user_c" button={l.followBack} filled />
+          <Row y={154} name="user_d" button={l.followingButton} />
+        </>
+      )}
     </g>
   );
 }
@@ -152,7 +178,7 @@ export function OpenConsoleIllustration({ l }: { l: Labels }) {
 
 /** 3. 콘솔에 스크립트를 붙여 넣고 Enter. Chrome 이 막으면 allow pasting. */
 export function PasteScriptIllustration({ l }: { l: Labels }) {
-  const code = ["(async () => {", "  const CONFIG = {", "    unfollow: false,", "    keep: [],", "  };", "  …", "})();"];
+  const code = ["(async () => {", "  const CONFIG = {", "    keep: [],", "  };", "  …", "})();"];
   return (
     <Browser>
       <rect x="0" y="20" width="320" height="160" fill="#202124" />
@@ -228,9 +254,34 @@ export function ResultTableIllustration({ l }: { l: Labels }) {
         <line x1={col[1]} x2={col[1]} y1="58" y2="122" stroke="#3c3c3c" />
         <line x1={col[2]} x2={col[2]} y1="58" y2="122" stroke="#3c3c3c" />
       </g>
-      <text x="10" y="140" fontSize="6.5" fill="#9aa0a6">
-        {l.dryRun}
+      {rows.map((name, i) => (
+        <text key={name} x="10" y={134 + i * 9} fontSize="7" fill="#e8eaed" fontFamily={MONO}>
+          {name}
+        </text>
+      ))}
+      <text x="10" y="170" fontSize="6.5" fill="#9aa0a6">
+        {l.done}
       </text>
+    </Browser>
+  );
+}
+
+/** 5. 팔로잉 탭 제목을 눌러 페이지를 선택하고, Cmd+F 로 계정을 찾아 직접 언팔로우. */
+export function FindAndUnfollowIllustration({ l }: { l: Labels }) {
+  return (
+    <Browser>
+      <FollowDialog l={l} tab="following" found="user_b" />
+      {/* 브라우저 찾기 막대 */}
+      <rect x="256" y="24" width="58" height="16" rx="4" fill="#2b2b2b" stroke="#4a4a4a" />
+      <text x="261" y="34.5" fontSize="6.5" fill={TEXT} fontFamily={MONO}>
+        user_b
+      </text>
+      <text x="309" y="34.5" fontSize="6" fill={MUTED} textAnchor="end">
+        1/1
+      </text>
+      <Cursor x={226} y={104} />
+      <Key x={262} y={152} label="⌘F" highlight />
+      <Key x={262} y={132} label="Ctrl+F" />
     </Browser>
   );
 }
@@ -240,4 +291,5 @@ export const STEP_ILLUSTRATIONS = [
   OpenConsoleIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
+  FindAndUnfollowIllustration,
 ];

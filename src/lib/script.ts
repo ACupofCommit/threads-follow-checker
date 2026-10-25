@@ -1,20 +1,13 @@
-// 스레드 콘솔 스크립트 템플릿. 원본(threads-nonfollowers.js)의 구조와 셀렉터는 그대로 두고 CONFIG 만 폼 값으로 바꿔 끼운다.
+// 스레드 콘솔 스크립트 템플릿. 원본(threads-nonfollowers.js)의 찾기 부분 구조와 셀렉터는 그대로 두고 CONFIG 만 폼 값으로 바꿔 끼운다.
+// 언팔로우는 계정 제한 위험이 있어 스크립트에서 뺐다. 사용자가 결과를 보고 직접 언팔로우한다.
 // 이 파일은 다른 모듈을 가져오지 않는다. 테스트(script.test.ts)가 node 로 바로 불러 쓰기 때문이다.
 
 export type ScriptOptions = {
-  /** 맞팔이 아니어도 계속 팔로우할 계정. */
+  /** 맞팔이 아니어도 결과에서 뺄 계정. */
   keep: string[];
-  unfollow: boolean;
 };
 
-/**
- * 자동 언팔로우는 한 번 실행에 2명까지만, 사이 간격은 2~4초로 고정한다.
- * 사람이 손으로 두 번 누르는 정도에 맞춰 Meta 의 자동화 제한을 피하려는 것이라 사용자가 바꾸지 못하게 한다.
- */
-export const UNFOLLOW_PER_RUN = 2;
-export const UNFOLLOW_DELAY_SEC = { min: 2, max: 4 };
-
-export const DEFAULT_OPTIONS: ScriptOptions = { keep: [], unfollow: false };
+export const DEFAULT_OPTIONS: ScriptOptions = { keep: [] };
 
 const SITE = "https://threads-follow-checker.commit2.app";
 
@@ -31,19 +24,10 @@ export function parseKeep(text: string): string[] {
 }
 
 function configBlock(options: ScriptOptions): string {
-  const o = options;
   // 계정 이름은 JSON.stringify 로 넣어 따옴표·특수 문자가 코드로 새지 않게 한다.
-  const keep = o.keep.length === 0 ? "[]" : `[\n${o.keep.map((name) => `      ${JSON.stringify(name)},`).join("\n")}\n    ]`;
-  return [
-    "  const CONFIG = {",
-    `    unfollow: ${o.unfollow},${o.unfollow ? "           // 실제로 언팔로우한다" : "          // true 면 실제로 언팔로우한다"}`,
-    `    maxUnfollow: ${UNFOLLOW_PER_RUN},           // 한 번 실행에 언팔로우할 최대 계정 수`,
-    `    minDelayMs: ${UNFOLLOW_DELAY_SEC.min * 1000},        // 언팔로우 사이 최소 간격`,
-    `    maxDelayMs: ${UNFOLLOW_DELAY_SEC.max * 1000},        // 언팔로우 사이 최대 간격`,
-    `    keep: ${keep}, // 맞팔이 아니어도 계속 팔로우할 계정`,
-    "  };",
-    "",
-  ].join("\n");
+  const keep =
+    options.keep.length === 0 ? "[]" : `[\n${options.keep.map((name) => `      ${JSON.stringify(name)},`).join("\n")}\n    ]`;
+  return ["  const CONFIG = {", `    keep: ${keep}, // 맞팔이 아니어도 결과에서 뺄 계정`, "  };", ""].join("\n");
 }
 
 export function buildScript(options: ScriptOptions): string {
@@ -51,15 +35,14 @@ export function buildScript(options: ScriptOptions): string {
   return TEMPLATE.replace("__SITE__", () => SITE).replace("__CONFIG__", () => configBlock(options));
 }
 
-const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지 않는 계정 찾기 (+ 선택적으로 언팔로우)
+const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지 않는 계정 찾기
 // __SITE__ 에서 만든 스크립트입니다. 이 브라우저 안에서만 돌고, 어떤 데이터도 밖으로 보내지 않습니다.
 //
 // 쓰는 법
 // 1. 스레드 내 프로필에서 "OO followers"를 눌러 팔로워/팔로잉 대화상자를 연다.
 // 2. 개발자 도구 콘솔에 이 스크립트 전체를 붙여 넣고 Enter.
-//
-// 주의: Meta 는 자동화된 대량 행동을 제한한다. 한 번에 많이 언팔로우하면
-// "작업이 제한됨" 경고나 계정 제한을 받을 수 있으니, 간격을 길게 두고 하루에 조금씩만 한다.
+// 3. 결과의 계정 이름을 복사해 팔로잉 탭에서 Cmd+F(Windows 는 Ctrl+F)로 찾아 직접 언팔로우한다.
+//    이 스크립트는 목록만 보여 주고 아무도 언팔로우하지 않는다.
 
 (async () => {
 __CONFIG__
@@ -115,64 +98,10 @@ __CONFIG__
   console.table(targets.map((u) => ({ 계정: u, 주소: \`https://www.threads.com/@\${u}\` })));
   window.__nonFollowers = targets;
 
-  if (!CONFIG.unfollow) {
-    console.log("DRY_RUN: 아무도 언팔로우하지 않았습니다. CONFIG.unfollow 를 true 로 바꾸면 언팔로우합니다.");
-    return;
-  }
-
-  // 언팔로우: 팔로잉 탭에서 그 계정 줄의 "Following" 버튼 → 확인창의 "Unfollow" 버튼.
-  const rowOf = (u) => {
-    const a = [...dialog().querySelectorAll(\`a[href^="/@\${u}"]\`)].find(
-      (x) => x.getAttribute("href").slice(2).split(/[/?]/)[0] === u,
-    );
-    let el = a;
-    while (el && el !== dialog() && !el.querySelector('[role="button"]')) el = el.parentElement;
-    return el;
-  };
-  async function findRow(u) {
-    const sc = scroller();
-    if (sc) sc.scrollTop = 0;
-    for (let k = 0; k < 60; k++) {
-      const row = rowOf(u);
-      if (row) return row;
-      const s = scroller();
-      if (!s || s.scrollTop + s.clientHeight >= s.scrollHeight - 2) break;
-      s.scrollTop += s.clientHeight * 0.8;
-      await sleep(800);
-    }
-    return null;
-  }
-  const isFollowingText = (t) => /^(Following|팔로잉)$/.test(t);
-  const isConfirmText = (t) => /^(Unfollow|언팔로우|팔로우 취소)$/.test(t);
-
-  await openTab(1);
-  let done = 0;
-  for (const u of targets.slice(0, CONFIG.maxUnfollow)) {
-    const row = await findRow(u);
-    const btn = row && [...row.querySelectorAll('[role="button"]')].find((b) => isFollowingText(b.innerText.trim()));
-    if (!btn) {
-      console.warn(\`@\${u}: 팔로잉 버튼을 못 찾아서 건너뜁니다.\`);
-      continue;
-    }
-    btn.scrollIntoView({ block: "center" });
-    btn.click();
-    await sleep(1200);
-    const confirm = [...document.querySelectorAll('[role="button"], button')].find((b) =>
-      isConfirmText(b.innerText.trim()),
-    );
-    if (confirm) {
-      confirm.click();
-      await sleep(1200);
-    }
-    const nowText = btn.innerText.trim();
-    if (isFollowingText(nowText)) {
-      console.warn(\`@\${u}: 언팔로우가 반영되지 않았습니다. 여기서 멈춥니다 (제한 경고가 떴는지 확인하세요).\`);
-      break;
-    }
-    done += 1;
-    console.log(\`@\${u} 언팔로우 (\${done}/\${Math.min(targets.length, CONFIG.maxUnfollow)})\`);
-    await sleep(rand(CONFIG.minDelayMs, CONFIG.maxDelayMs));
-  }
-  console.log(\`끝: \${done}명 언팔로우. 남은 대상은 다음에 다시 실행하세요.\`);
+  // 계정 이름만 따로 찍어 복사하기 쉽게 한다.
+  if (targets.length > 0) console.log(targets.join("\\n"));
+  console.log(
+    "언팔로우는 하지 않았습니다. 계정 이름을 복사해 팔로잉 탭에서 Cmd+F(Windows는 Ctrl+F)로 찾아 직접 언팔로우하세요.",
+  );
 })();
 `;
