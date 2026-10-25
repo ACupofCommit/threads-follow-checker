@@ -52,7 +52,7 @@ export function ScriptBuilder({ t }: { t: Dictionary }) {
 
         <div className="flex flex-col gap-2">
           {/* AI 검사와 콘솔 붙여 넣기에 같은 스크립트를 쓰도록 복사 버튼은 하나만 둔다. */}
-          <Button size="lg" className="h-11 text-base" onClick={copy}>
+          <Button size="lg" className="copy-cta h-14 rounded-xl text-lg font-bold [&_svg:not([class*='size-'])]:size-5" onClick={copy}>
             <Copy /> {o.copy}
           </Button>
           <p className="text-muted-foreground text-center text-xs">{o.note}</p>

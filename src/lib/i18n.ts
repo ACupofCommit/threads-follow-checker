@@ -61,7 +61,7 @@ const ko = {
     items: [
       {
         title: "스크립트 복사하고 AI로 검사",
-        body: "이 도구는 threads.com 에 로그인한 탭의 개발자 도구에 스크립트를 붙여 넣어 쓰는 방식이에요. 그래서 붙여 넣기 전에 스크립트가 안전한지부터 검사해요. 아래 ‘스크립트 만들기’에서 ‘스크립트 복사’를 누르고, ChatGPT·Claude·Gemini 같은 AI 채팅에 이렇게 물어본 뒤 스크립트를 붙여 넣어요.",
+        body: "이 도구는 threads.com 에 로그인한 탭의 개발자 도구에 스크립트를 붙여 넣어 쓰는 방식이에요. 그래서 붙여 넣기 전에 스크립트가 안전한지부터 검사해요. 아래 ‘스크립트 복사’를 누르고, ChatGPT·Claude·Gemini 같은 AI 채팅에 이렇게 물어본 뒤 스크립트를 붙여 넣어요.",
         prompt:
           "threads.com 개발자 도구 콘솔에 붙여 넣으려는 스크립트야. 외부로 데이터를 보내거나, 쿠키·토큰을 읽거나, 나 대신 팔로우·게시 같은 행동을 하는 위험한 코드가 있는지 검사해 줘.",
         warning:
@@ -198,7 +198,7 @@ const en: Dictionary = {
     items: [
       {
         title: "Copy the script and check it with AI",
-        body: "This tool works by pasting a script into the developer tools of a tab signed in to threads.com, so first check that the script is safe. Click ‘Copy script’ in ‘Build your script’ below, then ask an AI chat like ChatGPT, Claude, or Gemini something like this and paste the script.",
+        body: "This tool works by pasting a script into the developer tools of a tab signed in to threads.com, so first check that the script is safe. Click ‘Copy script’ below, then ask an AI chat like ChatGPT, Claude, or Gemini something like this and paste the script.",
         prompt:
           "I'm about to paste this script into the developer console on threads.com. Check whether it has anything dangerous: sending data out, reading cookies or tokens, or acting on my behalf like following or posting.",
         warning:

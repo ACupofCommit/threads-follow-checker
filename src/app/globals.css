@@ -127,4 +127,63 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4 는 버튼 커서를 기본(화살표)으로 두므로, 누를 수 있는 것은 손가락 모양으로 바꾼다. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+}
+
+/* 스크립트 복사 버튼: 초록 그라데이션이 흐르고 빛이 지나가며 눈에 띄게 한다. */
+@keyframes cta-flow {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes cta-shine {
+  60%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.copy-cta {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(110deg, #00a63e, #00c853 35%, #00bfa5 65%, #00a63e);
+  background-size: 200% 100%;
+  box-shadow: 0 10px 28px -10px color-mix(in oklch, #00a63e 75%, transparent);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  animation: cta-flow 5s linear infinite;
+}
+
+.copy-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -10px color-mix(in oklch, #00a63e 90%, transparent);
+}
+
+.copy-cta:active {
+  transform: translateY(0);
+}
+
+.copy-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: cta-shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-cta,
+  .copy-cta::after {
+    animation: none;
+  }
 }
