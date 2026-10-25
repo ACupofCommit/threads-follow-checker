@@ -28,6 +28,14 @@ const ko = {
   steps: {
     title: "사용 방법",
     illustration: {
+      profile: {
+        nav: ["추천", "새로운 스레드", "검색", "메시지", "활동", "프로필", "인사이트"],
+        activeNav: 5,
+        name: "내 이름",
+        followers: "팔로워 142명 · 최근 조회수 1.2만회",
+        editProfile: "프로필 편집",
+        tabs: ["스레드", "답글", "미디어", "리포스트"],
+      },
       followers: "팔로워",
       following: "팔로잉",
       followBack: "맞팔로우",
@@ -139,6 +147,14 @@ const en: Dictionary = {
   steps: {
     title: "How to use",
     illustration: {
+      profile: {
+        nav: ["For you", "New thread", "Search", "Messages", "Activity", "Profile", "Insights"],
+        activeNav: 5,
+        name: "My Name",
+        followers: "142 followers · 12K recent views",
+        editProfile: "Edit profile",
+        tabs: ["Threads", "Replies", "Media", "Reposts"],
+      },
       followers: "Followers",
       following: "Following",
       followBack: "Follow back",

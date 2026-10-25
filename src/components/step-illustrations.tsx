@@ -146,18 +146,60 @@ function FollowDialog({ l, tab = "followers", flagged = [] }: { l: Labels; tab?:
   );
 }
 
-/** 1. 내 프로필에서 팔로워 수를 눌러 연 대화상자. */
-export function OpenDialogIllustration({ l }: { l: Labels }) {
+/** 1. threads.com 에 로그인한 화면(내 프로필). 팔로워 창은 스크립트가 연다. */
+export function SignedInIllustration({ l }: { l: Labels }) {
+  const p = l.profile;
   return (
     <Browser>
-      {/* 뒤의 프로필 화면 */}
-      <rect x="14" y="30" width="44" height="6" rx="3" fill="#2a2a2a" />
-      {[44, 56, 68, 80].map((y) => (
-        <rect key={y} x="14" y={y} width="36" height="5" rx="2.5" fill="#1f1f1f" />
+      {/* 왼쪽 메뉴 */}
+      <text x="12" y="36" fontSize="10" fontWeight="800" fontStyle="italic" fill={TEXT}>
+        threads
+      </text>
+      {p.nav.map((label, i) => {
+        const y = 52 + i * 14;
+        const active = i === p.activeNav;
+        return (
+          <g key={label}>
+            {active && <rect x="7" y={y - 8.5} width="70" height="13" rx="3" fill="#262626" />}
+            <circle cx="15" cy={y - 2} r="3" fill="none" stroke={active ? TEXT : MUTED} strokeWidth="1.2" />
+            <text x="23" y={y} fontSize="6.5" fontWeight={active ? 700 : 400} fill={active ? TEXT : "#bbb"}>
+              {label}
+            </text>
+          </g>
+        );
+      })}
+      {/* 프로필 카드 */}
+      <rect x="90" y="28" width="222" height="160" rx="10" fill={PANEL} stroke={LINE} />
+      <text x="102" y="47" fontSize="9" fontWeight="700" fill={TEXT}>
+        {p.name}
+      </text>
+      <text x="102" y="57" fontSize="6.5" fill="#bbb">
+        me
+      </text>
+      <circle cx="288" cy="48" r="13" fill="#3a3a3a" />
+      {[66, 74, 82].map((y, i) => (
+        <rect key={y} x="102" y={y} width={[120, 140, 96][i]} height="4" rx="2" fill="#2e2e2e" />
       ))}
-      <rect x="262" y="34" width="44" height="44" rx="22" fill="#222" />
-      <FollowDialog l={l} />
-      <Cursor x={140} y={44} />
+      {[0, 1, 2].map((i) => (
+        <circle key={i} cx={105 + i * 5} cy="96" r="3.2" fill={["#5a5a5a", "#6a6a6a", "#7a7a7a"][i]} stroke={PANEL} />
+      ))}
+      <text x="121" y="98.5" fontSize="6.5" fill={MUTED}>
+        {p.followers}
+      </text>
+      <rect x="102" y="106" width="198" height="14" rx="4" fill="none" stroke="#444" />
+      <text x="201" y="115.5" fontSize="6.5" fontWeight="600" fill={TEXT} textAnchor="middle">
+        {p.editProfile}
+      </text>
+      {p.tabs.map((label, i) => (
+        <text key={label} x={127 + i * 50} y="136" fontSize="6.5" fontWeight={i === 0 ? 700 : 400} fill={i === 0 ? TEXT : MUTED} textAnchor="middle">
+          {label}
+        </text>
+      ))}
+      <line x1="90" x2="312" y1="142" y2="142" stroke={LINE} />
+      <line x1="102" x2="152" y1="142" y2="142" stroke={TEXT} strokeWidth="1.2" />
+      <circle cx="108" cy="156" r="6" fill="#3a3a3a" />
+      <rect x="120" y="153.5" width="90" height="5" rx="2.5" fill="#262626" />
+      <rect x="276" y="150" width="24" height="12" rx="4" fill="none" stroke="#444" />
     </Browser>
   );
 }
@@ -297,7 +339,7 @@ export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
 }
 
 export const STEP_ILLUSTRATIONS = [
-  OpenDialogIllustration,
+  SignedInIllustration,
   OpenConsoleIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
