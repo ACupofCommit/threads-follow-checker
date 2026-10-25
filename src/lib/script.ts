@@ -44,12 +44,18 @@ const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지
 // 3. 팔로잉 목록에서 "뒷삭하였음" 표시가 붙은 계정을 직접 언팔로우한다.
 //    이 스크립트는 목록을 보여 주고 화면에 표시만 할 뿐, 아무도 언팔로우하지 않는다.
 
-(async () => {
+// 앞의 void 는 콘솔이 Promise {<pending>} 을 찍지 않게 한다. 진행 상황은 아래 안내로 보여 준다.
+void (async () => {
 __CONFIG__
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const rand = (a, b) => a + Math.random() * (b - a);
   const dialog = () => document.querySelector('[role="dialog"]');
   if (!dialog()) return console.error("팔로워/팔로잉 대화상자를 먼저 열어 주세요.");
+
+  const startedAt = Date.now();
+  const elapsed = () => Math.round((Date.now() - startedAt) / 1000) + "초";
+  console.log("🔍 맞팔 확인을 시작합니다. 계정 수에 따라 몇 분 걸릴 수 있어요.");
+  console.log("⏳ 끝날 때까지 이 탭과 팔로워 창을 닫지 말고 기다려 주세요.");
 
   const tabs = () => [...dialog().querySelectorAll('[role="tab"]')];
   const tabOf = (i) => tabs()[i]; // 0 = Followers(팔로워), 1 = Following(팔로잉)
@@ -71,26 +77,37 @@ __CONFIG__
   // 바닥에 닿은 상태에서 새 계정이 5번 연속 안 늘면 끝으로 본다.
   async function collect(i, label) {
     await openTab(i);
+    const total = countOf(i);
+    console.log("⏳ " + label + " 수집 중… (화면 표시 " + total + "명)");
     const sc = scroller();
     if (sc) sc.scrollTop = 0;
     await sleep(800);
     const set = new Set();
     let still = 0;
+    let rounds = 0;
+    let logged = 0;
     while (still < 5) {
       const before = set.size;
       usernamesInView().forEach((u) => set.add(u));
+      // 몇 번 스크롤할 때마다 지금까지 모은 수를 알려 준다.
+      rounds += 1;
+      if (rounds % 4 === 0 && set.size !== logged) {
+        logged = set.size;
+        console.log("   " + label + " " + set.size + "/" + total + "명 모음 · " + elapsed());
+      }
       const s = scroller();
       const atBottom = !s || s.scrollTop + s.clientHeight >= s.scrollHeight - 2;
       if (s) s.scrollTop += s.clientHeight * 0.8;
       await sleep(rand(1000, 1800));
       still = set.size === before && atBottom ? still + 1 : 0;
     }
-    console.log(\`\${label}: \${set.size}명 수집 (화면 표시 \${countOf(i)}명)\`);
+    console.log(\`✓ \${label}: \${set.size}명 수집 (화면 표시 \${countOf(i)}명)\`);
     return set;
   }
 
   const followers = await collect(0, "팔로워");
   const following = await collect(1, "팔로잉");
+  console.log("🧮 계산 중…");
   const keep = new Set(CONFIG.keep);
   const targets = [...following].filter((u) => !followers.has(u) && !keep.has(u));
 
@@ -105,6 +122,7 @@ __CONFIG__
   // 화면 모양만 바꾸고 스레드에는 아무것도 보내지 않는다. 새로 고치면 사라진다.
   // 스레드 화면을 그리는 React 와 부딪히지 않게 요소를 끼워 넣지 않고 속성과 CSS(::after)로만 표시한다.
   // 목록은 스크롤할 때마다 줄을 다시 그리고 같은 요소에 다른 계정을 넣기도 하므로, 바뀔 때마다 다시 맞춘다.
+  console.log("🖍️ 팔로잉 목록에 '뒷삭하였음' 표시 중…");
   const targetSet = new Set(targets);
   const ROW = "data-nonfollower";
   const NAME = "data-nonfollower-name";
@@ -158,6 +176,7 @@ __CONFIG__
   window.__nonFollowerObserver = observer;
   mark();
 
+  console.log("✅ 끝났습니다 (" + elapsed() + ").");
   console.log(
     "언팔로우는 하지 않았습니다. 팔로잉 목록에서 '뒷삭하였음' 표시가 붙은 계정을 직접 언팔로우하세요. 표시는 새로 고치면 사라집니다.",
   );
