@@ -11,7 +11,7 @@ export function Steps({ t }: { t: Dictionary }) {
         {t.steps.items.map((step, index) => {
           const Illustration = STEP_ILLUSTRATIONS[index];
           return (
-            <li key={index} className="bg-card grid items-start gap-4 rounded-xl border p-4 md:grid-cols-[1fr_minmax(0,1.15fr)]">
+            <li key={index} className="bg-card grid items-start gap-4 rounded-xl border p-4 md:grid-cols-[1fr_minmax(0,1.4fr)]">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">

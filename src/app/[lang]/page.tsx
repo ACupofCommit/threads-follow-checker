@@ -18,7 +18,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   return (
     <>
       <Header lang={lang} t={t} />
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 pt-10 pb-16 sm:pt-16">
+      <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 pt-10 pb-16 sm:pt-16">
         <section className="flex flex-col gap-3 text-center">
           <h1 className="text-3xl font-bold tracking-tight whitespace-pre-line sm:text-4xl">{t.hero.title}</h1>
           <p className="text-muted-foreground mx-auto max-w-xl text-balance break-keep">{t.hero.subtitle}</p>
