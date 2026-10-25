@@ -211,7 +211,7 @@ export function SignedInIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 2. 오른쪽에 개발자 도구를 열고 Console 탭으로. */
+/** 3. 오른쪽에 개발자 도구를 열고 Console 탭으로. */
 export function OpenConsoleIllustration({ l }: { l: Labels }) {
   return (
     <Browser>
@@ -245,7 +245,7 @@ export function OpenConsoleIllustration({ l }: { l: Labels }) {
   );
 }
 
-/** 3. 복사한 스크립트를 AI 채팅에 붙여 넣어 안전한지 검사. 특정 AI 서비스가 아닌 일반 채팅 화면이다. */
+/** 2. 복사한 스크립트를 AI 채팅에 붙여 넣어 안전한지 검사. 특정 AI 서비스가 아닌 일반 채팅 화면이다. */
 export function AiCheckIllustration({ l }: { l: Labels }) {
   const a = l.ai;
   return (
@@ -390,8 +390,8 @@ export function UnfollowMarkedIllustration({ l }: { l: Labels }) {
 
 export const STEP_ILLUSTRATIONS = [
   SignedInIllustration,
-  OpenConsoleIllustration,
   AiCheckIllustration,
+  OpenConsoleIllustration,
   PasteScriptIllustration,
   ResultTableIllustration,
   UnfollowMarkedIllustration,
