@@ -15,7 +15,8 @@ import { buildScript, parseKeep } from "@/lib/script";
 export function ScriptBuilder({ t }: { t: Dictionary }) {
   const o = t.options;
   const id = useId();
-  const [keepText, setKeepText] = useState("");
+  // 커밋한잔 계정은 맞팔이 아니어도 결과에서 빼도록 기본으로 넣어 둔다. 지우면 빠진다.
+  const [keepText, setKeepText] = useState("@acupofcommit");
 
   const keep = useMemo(() => parseKeep(keepText), [keepText]);
   const script = buildScript({ keep });

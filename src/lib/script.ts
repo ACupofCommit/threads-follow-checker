@@ -125,8 +125,7 @@ void (async () => {
     }
 
     // 무한 스크롤: 화면의 80%씩 내리면서 보이는 계정을 모은다(한 번에 끝으로 건너뛰면 중간 줄을 놓친다).
-    // 바닥에 닿은 상태에서 새 계정이 연속으로 안 늘면 끝으로 본다. 탭 숫자보다 적게 모였으면 다음 묶음을
-    // 늦게 불러오는 중일 수 있어 더 오래 기다리고, 조금 올렸다 내려 다시 불러오게 한다.
+    // 바닥에 닿은 상태에서 한동안 새 계정이 안 늘면 끝으로 본다(아래 patience).
     async function collect(i, label) {
       await openTab(i);
       const total = countOf(i);
@@ -135,12 +134,21 @@ void (async () => {
       if (sc) sc.scrollTop = 0;
       await sleep(800);
       const set = new Set();
-      let still = 0;
       let rounds = 0;
       let logged = 0;
-      while (still < (set.size >= total ? 4 : 10)) {
+      let lastGrowth = Date.now();
+      let nextWaitLog = 10000;
+      const tabStartedAt = Date.now();
+      // 끝 판단은 횟수가 아니라 "마지막으로 늘어난 뒤 지난 시간"으로 한다. 스레드는 목록 요청이 몰리면
+      // 다음 묶음을 점점 늦게 내려주므로, 탭 숫자보다 덜 모였으면 60초까지 기다린다.
+      const patience = () => (set.size >= total ? 5000 : 60000);
+      while (true) {
         const before = set.size;
         usernamesInView().forEach((u) => set.add(u));
+        if (set.size > before) {
+          lastGrowth = Date.now();
+          nextWaitLog = 10000;
+        }
         // 몇 번 스크롤할 때마다 지금까지 모은 수를 알려 준다.
         rounds += 1;
         if (rounds % 4 === 0 && set.size !== logged) {
@@ -149,15 +157,23 @@ void (async () => {
         }
         const s = scroller();
         const atBottom = !s || s.scrollTop + s.clientHeight >= s.scrollHeight - 2;
+        const quiet = Date.now() - lastGrowth;
+        if (atBottom && quiet >= patience()) break;
+        // 안전장치: 한 탭에 15분을 넘기면 멈춘다.
+        if (Date.now() - tabStartedAt > 15 * 60 * 1000) break;
         if (s && atBottom && set.size === before) {
-          s.scrollTop -= s.clientHeight;
-          await sleep(300);
+          if (quiet >= nextWaitLog) {
+            console.log("   " + label + " 다음 목록을 불러오는 중… (" + set.size + "/" + total + "명, " + Math.round(quiet / 1000) + "초째)");
+            nextWaitLog += 10000;
+          }
+          // 바닥에서 몇 화면 올렸다가 다시 내려, 스레드가 다음 묶음을 다시 부르게 한다.
+          s.scrollTop = Math.max(0, s.scrollTop - s.clientHeight * 3);
+          await sleep(400);
           s.scrollTop = s.scrollHeight;
         } else if (s) {
           s.scrollTop += s.clientHeight * 0.8;
         }
         await sleep(rand(1000, 1800));
-        still = set.size === before && atBottom ? still + 1 : 0;
       }
       if (total && set.size < total * 0.97) {
         console.warn("⚠ " + label + "를 다 모으지 못했을 수 있어요 (" + set.size + "/" + total + "명). 탭 숫자에는 목록에 안 보이는 비활성 계정도 들어가지만, 차이가 크면 다시 실행해 보세요.");
