@@ -42,8 +42,8 @@ const ko = {
     },
     items: [
       {
-        title: "PC에서 스레드 내 프로필 열기",
-        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인하고 내 프로필을 열어요. 팔로워·팔로잉 창은 스크립트가 “팔로워 OO명”을 눌러 알아서 열어요.",
+        title: "PC에서 threads.com 로그인",
+        body: "PC 브라우저(Chrome 권장)로 threads.com 에 로그인해 두면 돼요. 어느 화면에 있든 스크립트가 내 프로필로 이동해 “팔로워 OO명”을 눌러 팔로워·팔로잉 창을 열어요.",
       },
       {
         title: "개발자 도구 콘솔 열기",
@@ -153,8 +153,8 @@ const en: Dictionary = {
     },
     items: [
       {
-        title: "Open your profile on desktop",
-        body: "Sign in to threads.com in a desktop browser (Chrome recommended) and open your profile. The script clicks “OO followers” to open the followers/following dialog for you.",
+        title: "Sign in to threads.com on desktop",
+        body: "Just sign in to threads.com in a desktop browser (Chrome recommended). Wherever you are on Threads, the script goes to your profile and clicks “OO followers” to open the followers/following dialog.",
       },
       {
         title: "Open the developer console",

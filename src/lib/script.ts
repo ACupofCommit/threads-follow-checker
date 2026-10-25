@@ -39,7 +39,7 @@ const TEMPLATE = `// 스레드: 내가 팔로우하는데 나를 팔로우하지
 // __SITE__ 에서 만든 스크립트입니다. 이 브라우저 안에서만 돌고, 어떤 데이터도 밖으로 보내지 않습니다.
 //
 // 쓰는 법
-// 1. 스레드에서 내 프로필을 연다. 팔로워 창이 닫혀 있으면 스크립트가 "팔로워 OO명"을 눌러 연다.
+// 1. threads.com 에 로그인한 탭에서 실행한다. 내 프로필 이동과 팔로워 창 열기는 스크립트가 한다.
 // 2. 개발자 도구 콘솔에 이 스크립트 전체를 붙여 넣고 Enter.
 // 3. 팔로잉 목록에서 "뒷삭 검거" 표시가 붙은 계정을 직접 언팔로우한다.
 //    이 스크립트는 목록을 보여 주고 화면에 표시만 할 뿐, 아무도 언팔로우하지 않는다.
@@ -50,18 +50,47 @@ __CONFIG__
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const rand = (a, b) => a + Math.random() * (b - a);
   const dialog = () => document.querySelector('[role="dialog"]');
-  if (!dialog()) {
-    // 팔로워 창이 닫혀 있으면 프로필의 "팔로워 OO명"(영문 "OO followers")을 눌러 연다.
-    const opener = [...document.querySelectorAll('[role="button"], a, span')].find((e) =>
+  // threads.com 탭에서만 돈다.
+  if (!/(^|\\.)threads\\.(com|net)$/.test(location.hostname)) {
+    return console.error("threads.com 탭에서 실행해 주세요. 지금 탭은 " + (location.hostname || location.href) + " 이에요.");
+  }
+
+  // 왼쪽 메뉴의 "프로필" 링크로 내 아이디를 알아낸다. 없으면 로그인하지 않은 것으로 본다.
+  const profileLink = () =>
+    [...document.querySelectorAll('a[href^="/@"]')].find(
+      (a) =>
+        /^(프로필|Profile)$/i.test((a.innerText || "").trim()) ||
+        /^(프로필|Profile)$/i.test(a.getAttribute("aria-label") || "") ||
+        a.querySelector('[aria-label="프로필"], [aria-label="Profile"]'),
+    );
+  const followersOpener = () =>
+    [...document.querySelectorAll('[role="button"], a, span')].find((e) =>
       /^(팔로워\\s*[\\d,.]+\\s*[천만]?\\s*명|[\\d,.]+\\s*[KkM]?\\s*followers?)$/i.test((e.innerText || "").trim()),
     );
+
+  if (!dialog()) {
+    const link = profileLink();
+    if (!link) {
+      return console.error("로그인되어 있지 않은 것 같아요. threads.com 에 로그인한 뒤 다시 실행해 주세요.");
+    }
+    const me = link.getAttribute("href").slice(2).split(/[/?]/)[0];
+    const onMyProfile = () => location.pathname.toLowerCase().startsWith("/@" + me.toLowerCase());
+    if (!onMyProfile()) {
+      // 주소를 직접 바꾸면 페이지가 새로 로드되며 이 스크립트도 멈추므로, 링크를 눌러 스레드 안에서 이동한다.
+      console.log("👤 내 프로필(@" + me + ")로 이동합니다…");
+      link.click();
+      for (let k = 0; k < 40 && !(onMyProfile() && followersOpener()); k++) await sleep(250);
+    }
+    // 팔로워 창이 닫혀 있으면 프로필의 "팔로워 OO명"(영문 "OO followers")을 눌러 연다.
+    for (let k = 0; k < 20 && !followersOpener(); k++) await sleep(250);
+    const opener = followersOpener();
     if (opener) {
       console.log("👆 팔로워 창을 엽니다…");
       (opener.closest('[role="button"], a') || opener).click();
       for (let k = 0; k < 20 && !dialog(); k++) await sleep(250);
     }
   }
-  if (!dialog()) return console.error("팔로워 창을 찾지 못했어요. 스레드에서 내 프로필(threads.com/@내아이디)을 연 뒤 다시 실행해 주세요.");
+  if (!dialog()) return console.error("팔로워 창을 열지 못했어요. 내 프로필에서 “팔로워 OO명”을 직접 누른 뒤 다시 실행해 주세요.");
 
   const startedAt = Date.now();
   const elapsed = () => Math.round((Date.now() - startedAt) / 1000) + "초";
